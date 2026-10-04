@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "connections": [
+    {
+      "id": "youtube-tech-owner",
+      "provider": "youtube",
+      "account_id": "REPLACE_WITH_VERIFIED_CHANNEL_ID",
+      "topic_ids": ["technology"],
+      "auth_kind": "n8n_oauth_reference",
+      "credential_ref": "REPLACE_WITH_LOCAL_REFERENCE",
+      "publish_mode": "review",
+      "daily_post_limit": 1
+    },
+    {
+      "id": "google-flow-owner",
+      "provider": "google_flow",
+      "auth_kind": "owner_browser_profile",
+      "profile_ref": "REPLACE_WITH_LOCAL_PROFILE_REFERENCE",
+      "session_status": "unknown",
+      "cash_limit_vnd": 0
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Affiliate · Trung tâm vận hành</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <aside>
+    <div class="brand">a<span>ffiliate</span><small>TRUNG TÂM VẬN HÀNH</small></div>
+    <nav><a href="#overview">Tổng quan</a><a href="#workflows">Các luồng</a>
+      <a href="#formats">Hai định dạng</a><a href="#connections">Tài khoản</a>
+      <a href="#history">Lịch sử chạy</a></nav>
+    <div class="side-note">Bản quản lý cục bộ<br><span>Giai đoạn 1 · Kết nối hệ thống hiện có</span></div>
+  </aside>
+  <main>
+    <header id="overview"><div><p class="eyebrow">ĐIỀU KHIỂN & ĐÁNH GIÁ</p>
+      <h1>Nội dung tốt. Luồng rõ ràng.</h1><p>Theo dõi sản phẩm, video và đường tới link của bạn.</p></div>
+      <button id="refresh" class="secondary">Làm mới màn hình</button></header>
+    <div id="notice" role="status">Đang đọc trạng thái…</div>
+    <section class="metrics" aria-label="Tình trạng"><article><p>Dịch vụ dựng</p><h2 id="worker">—</h2></article>
+      <article><p>Video công khai</p><h2 id="count">—</h2></article>
+      <article><p>Tổng lượt xem đã ghi nhận</p><h2 id="views">—</h2></article>
+      <article><p>Hoa hồng xác nhận</p><h2 id="commission">Chưa biết</h2></article></section>
+    <p id="observed" class="muted"></p>
+    <section id="workflows"><div class="section-head"><h2>Chạy từng luồng</h2><span>Nhận kết quả và lịch sử cho mỗi lần click</span></div>
+      <div id="actions" class="cards"></div>
+      <div class="pipeline"><span>Trend</span><b>→</b><span>Sản phẩm + link</span><b>→</b><span>A / B</span>
+        <b>→</b><span>Kiểm tra & review</span><b>→</b><span>Đăng & đo</span></div>
+      <details><summary>Các bước cần hoàn thiện để chạy hằng ngày</summary><ul id="blockers"></ul></details>
+    </section>
+    <section id="formats"><div class="section-head"><h2>Hai hướng video</h2><span>Cùng sản phẩm, hai cách kể</span></div>
+      <div class="formats"><article class="format"><span class="pill">A · GIỌNG & ĐỒ HOẠ</span>
+        <h3>Thông tin rõ, nhịp nhanh</h3><p>Hook → giọng tự nhiên → chữ và chuyển động → CTA tới đúng sản phẩm.</p>
+        <div class="visual-a"><strong>Chọn đúng micro<br>cho điện thoại của bạn</strong><i></i><em>GIỌNG ĐỌC · PHỤ ĐỀ · ĐỒ HOẠ</em></div>
+        <p class="muted">Đã có bộ dựng legacy. Tự tạo brief mới chưa nối.</p></article>
+        <article class="format"><span class="pill">B · FLOW XUYÊN SUỐT</span>
+        <h3>Nhiều cảnh, một mạch kể</h3><p>Nghiên cứu nguồn → storyboard → nhiều cảnh Flow → ghép toàn bộ video → CTA.</p>
+        <div class="visual-b"><div>Cảnh 01</div><div>Cảnh 02</div><div>Cảnh 03</div></div>
+        <p class="muted">Cần cảnh khớp SKU và quyền nguồn. Bản chỉ có Flow intro chưa đạt.</p></article></div>
+    </section>
+    <section id="connections"><div class="section-head"><h2>Tài khoản & đường mua</h2><span>Trạng thái, không hiển thị thông tin đăng nhập</span></div>
+      <div id="accounts" class="accounts"></div>
+      <p id="link-route"></p><p class="muted">Shorts: CTA dẫn qua link trên hồ sơ. Đường nhấp cần kiểm chứng mới trước lần đăng tiếp.</p>
+    </section>
+    <section><div class="section-head"><h2>Video đã ghi nhận</h2><span>Trạng thái công khai/riêng tư từ báo cáo</span></div>
+      <div id="videos" class="video-list"></div></section>
+    <section id="history"><div class="section-head"><h2>Lịch sử điều khiển</h2><span>Các lượt chạy từ trang này</span></div>
+      <div class="table-wrap"><table><thead><tr><th>Luồng</th><th>Bắt đầu</th><th>Kết quả</th><th>Chi tiết</th></tr></thead><tbody id="runs"></tbody></table></div></section>
+    <footer>Khả năng tự động hằng ngày đang được triển khai theo từng giai đoạn. Dữ liệu chưa có được giữ là “chưa biết”.</footer>
+  </main>
+</body>
+</html>

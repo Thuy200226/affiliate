@@ -1,0 +1,9 @@
+[project]
+name = "affiliate-platform"
+version = "0.1.0"
+requires-python = ">=3.12"
+description = "Local affiliate workflow control and modular migration foundation"
+
+[tool.affiliate]
+max-code-lines = 250
+max-function-lines = 60

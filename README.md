@@ -42,9 +42,13 @@ python3 scripts/test.py
 ```
 
 Không commit runtime cũ, bản sao lưu, credential export hay thư mục trình duyệt.
-Git remote và việc push chỉ thiết lập sau khi xác định repository đích.
+Repository đã push lên `Thuy200226/affiliate`, dùng danh tính cá nhân riêng cho repo.
 Xem [kế hoạch](docs/phases.md), [đánh giá code](docs/code-review.md),
 [kiến trúc](docs/architecture.md), [cách vận hành](docs/operations.md).
+
+Kế hoạch mở rộng theo yêu cầu mới: [sản phẩm, tương tác, hàng chờ và đăng tay](docs/product-console-plan.md).
+[Hợp đồng số liệu](docs/metrics-contract.md) quy định nguồn, kỳ đo và attribution.
+Đây là đặc tả tiếp theo; các màn hình/nút đăng mới chưa được triển khai.
 
 ## Mức hoàn thiện
 

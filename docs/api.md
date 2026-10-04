@@ -26,3 +26,29 @@ Các contract phase 2–5 sẽ bổ sung dưới /api/v1:
 - GET /publications: platform/account/permalink/link evidence, status.
 
 Những route sau chưa được tạo. Không dùng UI mock để báo chúng đã chạy.
+
+## Bổ sung cho console sản phẩm — planned
+
+Các contract sau sẽ được chốt trong C1–C4, không phải route hiện có:
+
+| Route | Trách nhiệm |
+|---|---|
+| GET /api/v1/products và /products/{id} | catalog/variants/evidence, lọc topic/account/status |
+| GET /api/v1/publications và /publications/{id} | registry; product/account/visibility, URL/readback |
+| GET /api/v1/metrics | object/metric/kỳ/nguồn/coverage; không trả token hay dữ liệu người mua |
+| POST /api/v1/metric-syncs | reserve sync theo connection/kỳ; trả run_id, không đồng bộ chặn UI |
+| GET /api/v1/discoveries | nguồn/tín hiệu, age/relevance/SKU match, lý do gợi ý |
+| GET /api/v1/jobs và /jobs/{id} | hàng chờ/revision/QC/checklist và bước hiện tại |
+| GET /api/v1/artifacts/{id}/preview | media allowlist của job; hỗ trợ Range, không nhận path |
+| POST /api/v1/jobs/{id}/revisions | tạo bản sửa; expected_revision để chống ghi đè |
+| POST /api/v1/publication-requests | job/revision/approval/route/idempotency_key; server đọc payload đã chốt |
+| GET /api/v1/publication-requests/{id} | tiến độ/uncertain/reconcile và URL đã xác minh |
+| POST /api/v1/manual-publication-reports | permalink chủ khai báo, cần kiểm tra account/media trước xác minh |
+| GET /api/v1/schedules | lịch/topic/account/mode/caps; lịch kiểm tra khác lịch đăng |
+
+Server trả reason_codes/checklist và next_action cho bước blocked; không trả một
+boolean “ready” thiếu lý do. Mutations kiểm session/CSRF/revision và quyền đích.
+Public request thiếu điều kiện trả 412; conflict/race trả 409; 202 chỉ là đã nhận
+job, không phải đã đăng. Upload uncertain giữ reservation để đối chiếu, không retry mù.
+
+Xem [luồng đăng tay](product-console-plan.md) và [metric contracts](metrics-contract.md).

@@ -3,13 +3,17 @@
 Ngày lập: 04/10/2026. Ngân sách tiền mới: 0. Ưu tiên một topic/SKU và YouTube đã
 có kết nối trước, rồi mới mở rộng. Hai video là hai sản phẩm độc lập trong cùng batch.
 
+Các lát cắt giao diện C1–C6 và nghiệm thu sản phẩm/tương tác/hàng chờ/đăng tay ở
+[kế hoạch console](product-console-plan.md). C1–C3 ưu tiên trước mở rộng đa nền tảng;
+dữ liệu theo [hợp đồng số liệu](metrics-contract.md), không cần đợi full automation.
+
 ## Phase 0 — Đánh giá và chuẩn bị Git
 
 Đã thực hiện: review đường đi hiện tại; tách repo sạch; chuẩn module/file/hàm;
 gitignore; docs/skills; checker trước Git. Không copy secret hoặc video.
 
 Nghiệm thu: mã kiểm tra đạt, nguồn rõ ràng, không có dữ liệu cá nhân/session được
-staged, xác định repository đích. Push cần URL repository và quyền tài khoản tương ứng.
+staged, xác định repository đích. Đã push main tới Thuy200226/affiliate bằng tài khoản cá nhân.
 
 ## Phase 1 — Console vận hành
 

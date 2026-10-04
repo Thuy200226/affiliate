@@ -5,6 +5,7 @@ from .legacy import ACTIONS, Legacy
 from .overview import summarize
 from .security import Sessions
 from .store import Store
+from .content import Content
 
 
 class UnavailableError(ValueError):
@@ -19,6 +20,7 @@ class Application:
         self.sessions = Sessions(settings.state)
         self.store = Store(settings.state / "runs.sqlite")
         self.bridge = bridge or Legacy(settings)
+        self.content = Content(settings)
 
     def overview(self):
         return summarize(self.bridge)

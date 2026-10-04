@@ -18,6 +18,6 @@ Chuyển module theo adapter → fixture sạch → shadow check → cutover m�
 Không activate/import publisher legacy để thử một refactor.
 Đọc docs/code-review.md để ưu tiên lỗi đã có bằng chứng.
 
-Yêu cầu hiện hành ở docs/b-only-console-plan.md và requirements-matrix.md; A/B cũ
-chỉ lịch sử. Khi thêm transition/Settings/source picker/publisher, dùng ma trận
+Yêu cầu hiện hành ở docs/two-video-workflow.md và requirements-matrix.md; B-only
+cũ chỉ lịch sử. Khi thêm transition/Settings/source picker/publisher, dùng ma trận
 workflow-cases.md và review hai lượt; không ghi planned API/UI là đã vận hành.

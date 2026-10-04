@@ -16,7 +16,7 @@ activate hoặc sửa các workflow này. Chúng vẫn là workflow legacy ngoà
 
 Luồng đích: Schedule → reserve daily batch → discover → match product → chọn nguồn
 → chủ xác nhận nguồn hoặc dùng lại xác nhận hợp lệ → resolve owned affiliate link
-→ B xuyên suốt → QC → review hoặc auto-release → publisher
+→ created tự dựng + selected xử lý nguồn đã chọn → QC riêng → review hoặc auto-release → publisher
 → verify processing/link → metrics. Mỗi bước trả run_id, status và artifact references.
 Không lọc/rank quyền trong discovery; unknown chờ chủ sau selection, không thay
 nguồn ngầm. Giữ release hold/revision và khóa chung với UI/heartbeat trước cutover.

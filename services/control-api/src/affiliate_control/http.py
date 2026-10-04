@@ -30,6 +30,8 @@ class Handler(BaseHTTPRequestHandler):
             return self.reply(200, {"ok": True, "service": "affiliate-control"})
         static = {"/": ("index.html", "text/html"), "/app.js": ("app.js", "text/javascript"),
                   "/style.css": ("style.css", "text/css")}
+        for name in ("workspace.js", "source-view.js", "output-view.js", "settings-view.js", "media-preview.js", "results-view.js"):
+            static["/" + name] = (name, "text/javascript")
         if self.path in static:
             name, mime = static[self.path]
             token = app.sessions.cookie_token(self.headers.get("Cookie"))
@@ -43,6 +45,11 @@ class Handler(BaseHTTPRequestHandler):
             return self.reply(200, app.overview() | {"csrf_token": app.sessions.csrf(token)})
         if self.path == "/api/runs":
             return self.reply(200, {"runs": app.store.recent()})
+        if self.path == "/api/content":
+            return self.reply(200, app.content.read())
+        from .media_http import serve
+        if serve(self):
+            return
         return self.reply(404, {"error": "Không có route này."})
 
     def do_POST(self):
@@ -53,9 +60,12 @@ class Handler(BaseHTTPRequestHandler):
             return self.reply(415, {"error": "Cần JSON."})
         try:
             length = int(self.headers.get("Content-Length", "0"))
-            if not 1 <= length <= 4096 or self.headers.get("Transfer-Encoding"):
+            maximum = 16384 if self.path == "/api/content/commands" else 4096
+            if not 1 <= length <= maximum or self.headers.get("Transfer-Encoding"):
                 return self.reply(413, {"error": "Body vượt giới hạn."})
             body = json.loads(self.rfile.read(length))
+            if self.path == "/api/content/commands":
+                return self.reply(200, app.content.post(body))
             prefix = "/api/actions/"
             if not self.path.startswith(prefix):
                 return self.reply(404, {"error": "Không có hành động này."})
@@ -65,7 +75,9 @@ class Handler(BaseHTTPRequestHandler):
             return self.reply(409, {"error": str(exc)})
         except UnavailableError as exc:
             return self.reply(412, {"error": str(exc)})
-        except (ValueError, KeyError, TypeError):
+        except ValueError as exc:
+            return self.reply(400, {"error": str(exc)})
+        except (KeyError, TypeError):
             return self.reply(400, {"error": "Hành động hoặc dữ liệu không hợp lệ."})
 
 

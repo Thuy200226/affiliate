@@ -7,6 +7,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "services/control-api/src"))
+sys.path.insert(0, str(ROOT / "packages/domain/src"))
 from affiliate_control.application import Application
 from affiliate_control.config import Settings
 from affiliate_control.http import make_server
@@ -27,6 +28,7 @@ def main():
         app = Application(settings)
         server = make_server(app)
         app.store.recover()
+        app.content.store.recover()
         print(f"Console ready: http://127.0.0.1:{args.port}", flush=True)
         try:
             server.serve_forever()

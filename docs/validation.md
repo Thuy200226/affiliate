@@ -1,12 +1,15 @@
 # Bằng chứng kiểm tra — 04/10/2026
 
-Lượt chốt B-only mới hơn: [hai lượt review và khoảng cách triển khai](review-20261004-b-only.md).
-Các kết quả nền tảng dưới đây không phải nghiệm thu 53 ca hoặc toàn bộ B tự động.
+Lượt hiện hành: [hai lượt review triển khai và UI](review-20261004-two-video.md).
+Plan B-only là lịch sử. Các kết quả dưới đây không phải nghiệm thu toàn bộ cases,
+Flow selected, daily/publisher hoặc chất lượng cảm nhận và hoa hồng.
 
 ## Bộ mã mới
 
-- 18 kiểm thử hành vi đạt: phiên/CSRF/host; API; reserve/restart; binding SKU/variant/
-  owner/account; TTL; vị trí link cho Shorts; hạn chế body/path/action.
+- 44 kiểm thử hành vi đạt: phiên/CSRF/host; API; reserve/restart; binding SKU/variant/
+  owner/account; TTL; vị trí link cho Shorts; hai nhánh/conflict/fencing; preflight;
+  source URL; MP4 Range/containment/disconnect; console metric null/0; lỗi OAuth
+  giữ số liệu cũ và không gán hoa hồng tổng vào bài.
 - Tất cả module mới dưới 250 dòng; hàm Python dưới 60 dòng.
 - JavaScript syntax check và Docker Compose config parse đạt; chưa build/chạy stack
   Docker mới hoặc chứng nhận renderer chạy trên Linux.
@@ -27,6 +30,12 @@ Các kết quả nền tảng dưới đây không phải nghiệm thu 53 ca ho�
 Media disabled vì hàng đợi trống. Không tạo bản đăng công khai để thử nút.
 UI hiển thị 3 video công khai, 312 tổng views theo snapshot 03/10, hoa hồng chưa biết;
 snapshot được ghi rõ là cần làm mới, không coi lỗi OAuth là views bằng 0.
+
+Đã dựng created MP4 thật 20.58 giây; preview tải đúng và không báo lỗi. Ba thumbnail
+nguồn và player nguồn/bài công khai tải được. Lọc kết quả theo ID, 8 bài đúng trạng
+thái public/private; mobile không tràn ngang. Dialog không làm mất draft khi huỷ.
+Selected chưa nhận MP4 và chưa chạy Flow; không có bản đăng mới. Hai lượt UI trên
+trang thật và chi tiết lỗi/fix/retest ở báo cáo mới phía trên.
 
 Phiên/token/account logs và run database chỉ lưu ngoài Git. Trang đã được giữ mở
 cho chủ sử dụng. Muốn duy trì qua reboot cần cấu hình service ở phase triển khai.

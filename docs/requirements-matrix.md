@@ -1,15 +1,15 @@
 # Đối chiếu yêu cầu của chủ — hiện hành 04/10/2026
 
 Các câu nói mới nhất thay thế yêu cầu mâu thuẫn trước đó, không cộng cả hai hướng.
-Đặc tả chính: [B-only console plan](b-only-console-plan.md). “Giữ” ở bảng này nghĩa
+Đặc tả chính: [workflow hai video](two-video-workflow.md). “Giữ” ở bảng này nghĩa
 là có trong thiết kế; không đồng nghĩa tính năng đã code hoặc đã chạy thành công.
 
 | ID | Yêu cầu đã đọc | Quyết định trong thiết kế | Nơi nghiệm thu |
 |---|---|---|---|
 | R01 | Dùng hệ thống sẵn, không xây một hệ thống khác | giữ repo/console/adapter, chuyển từng phần | P0/P5, architecture |
-| R02 | Bỏ A, tối ưu B | future chỉ B; giữ A lịch sử, không tạo lại A | §1/P0 |
-| R03 | Trước đó cần hai video | đã bị R02 thay thế; không tự tạo B thứ hai thay A | §1, queue/revision |
-| R04 | B xuyên suốt, không chỉ thêm Flow intro | full footage/storyline, không padding/intro A | §4/P3 |
+| R02 | Câu cũ bỏ A, tối ưu B | đã bị lời làm rõ R03 mới thay thế; giữ lịch sử | two-video-workflow |
+| R03 | Một video tự làm, một video chọn từ danh sách tìm kiếm | đúng created+selected độc lập; không gộp, không chỉ B | P1–P3, test_two_video |
+| R04 | Video nguồn xử lý xuyên suốt, không chỉ thêm Flow intro | selected dùng chính nguồn chọn; không padding hoặc đổi thành created | P3 |
 | R05 | Tổng quan/thống kê hệ thống | các số lượng, lỗi và trạng thái thật | §2/P1 |
 | R06 | Tổng hợp văn bản, hình sản phẩm, link | catalog/variant/evidence/brief, edit được | §3/P1/P2 |
 | R07 | Link affiliate đúng của chủ, đúng SKU | owner/SKU/campaign/account binding | §8/P4 |
@@ -22,7 +22,7 @@ là có trong thiết kế; không đồng nghĩa tính năng đã code hoặc �
 | R14 | Từng yêu cầu cũ xoá nguồn để đăng lại | không triển khai che xuất xứ/video không có quyền; chữ của chủ chỉnh được | §4, blocker rõ |
 | R15 | Nội dung tình dục theo câu cũ | chủ đã làm rõ không yêu cầu; không tiếp tục hiểu “nhạy cảm” là tình dục | §1 |
 | R16 | Theo dõi tiến độ video/copy | bước/heartbeat/output thật; không timer % giả | §2/5/P2/P3 |
-| R17 | B hoàn chỉnh chờ đăng, dễ so sánh | nguồn ↔ B hiện tại ↔ B trước; timecode/copy/link | §5/P3 |
+| R17 | Hai video hoàn chỉnh chờ đăng, dễ so sánh | created ↔ selected và nguồn/revisions; copy/link/QC riêng | P1–P3 |
 | R18 | Mặc định đăng, chủ có thể không đăng | auto mục tiêu sau nghiệm thu; hold per job bền vững | §5/8/P4/P5 |
 | R19 | Nhạy cảm chỉ cảnh báo text vẫn đăng | warning phong cách không chặn; technical/rights/platform blocker vẫn chặn | §5, W25/W26 |
 | R20 | Hiển thị đã đăng, bài/link/tài khoản | registry/readback/visibility/hash; không gán private là public | §2/8/P4 |
@@ -34,7 +34,7 @@ là có trong thiết kế; không đồng nghĩa tính năng đã code hoặc �
 | R26 | Trở về bước trước và làm lại | view back ≠ rerun; DAG revision/lease/fencing | §6, W08–W15 |
 | R27 | Đi tiếp bằng click | server transition/dependency/capability, không chỉ UI badge | §6/P2 |
 | R28 | Tự tìm, xử lý và đăng daily theo topic/account | scheduler chung, caps/quota/batch unique và recover | §8/P5 |
-| R29 | Tiếp tục kiểm tra mỗi 3h | giữ cadence kiểm tra riêng; khi cutover đồng bộ heartbeat B-only | §8/P5 |
+| R29 | Tiếp tục kiểm tra mỗi 3h | cadence kiểm tra riêng; cutover đồng bộ heartbeat hai nhánh | P5 |
 | R30 | Đa nền tảng khả thi, đúng link/hashtag | chỉ mở route đủ quyền; không coi login Shopee là quyền post mọi mạng | §8/P4/P5 |
 | R31 | Không nói AI/tự động/mục đích/thu nhập trong video | giọng/chữ chỉ sản phẩm; metadata/provenance cần thiết vẫn giữ | §4/P3/P4 |
 | R32 | Ngắn tích cực và hấp dẫn | hook/nhịp/visual/auditory QC; không bịa công dụng hoặc thử nghiệm | §4/10/P3 |
@@ -50,9 +50,12 @@ là có trong thiết kế; không đồng nghĩa tính năng đã code hoặc �
 
 ## Trạng thái triển khai tại lượt lập kế hoạch
 
-Console nền tảng/ba action và tests đã tồn tại. Các màn hình nguồn/edit/settings/
-face runner/publisher mới chưa tồn tại. Adapter B legacy còn standalone, upload
-worker không cho public. Không đánh dấu các hàng R05–R30 đã hoàn thành chỉ từ tài liệu.
+Console bảy khu vực/ba action, workspace hai nhánh, source picker, edit kịch bản/
+copy/hashtag/hold/revision, Settings và created renderer đã nối. Preview có Range.
+Source URL đã có danh sách thực tế, search API adapter cần cấu hình key. Selected
+confirmation/edit request lưu được nhưng Flow runner chưa nối; face-edit/publisher/
+daily chưa có. Link/SKU cần refresh và OAuth legacy đang lỗi. Không đánh dấu mọi
+hàng R05–R30 hoàn thành từ UI/tests. Xem review hai video để biết bằng chứng thật.
 Phát hiện/tiêu chí có điều kiện vẫn hiện ở UI/backlog; không tự chọn phương án khác.
 
 ## Cổng bàn giao

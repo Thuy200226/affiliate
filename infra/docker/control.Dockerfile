@@ -1,6 +1,7 @@
 FROM python:3.12-slim
 WORKDIR /app
 COPY services/control-api/src /app/services/control-api/src
+COPY packages/domain/src /app/packages/domain/src
 COPY apps/console /app/apps/console
 COPY scripts/dev.py /app/scripts/dev.py
 RUN useradd --uid 10001 --create-home affiliate && mkdir /app/.local && chown affiliate /app/.local

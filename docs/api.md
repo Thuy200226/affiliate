@@ -10,11 +10,20 @@ X-CSRF-Token; API không cấp quyền chạy khi chỉ biết URL. GET / tạo 
 | GET | /api/overview | worker, snapshot tuổi dữ liệu, video, stages, actions |
 | GET | /api/runs | tối đa 50 lượt chạy gần nhất |
 | POST | /api/actions/{trends,media,readiness} | {"idempotency_key":"uuid hoặc ID tương đương"} |
+| GET | /api/content | workspace hai nhánh + capabilities/blockers thật |
+| POST | /api/content/commands | action/data/batch_id/kind/expected_version/idempotency_key |
+| GET | /api/content/media/{batch_id}/{kind}/{revision} | MP4 đã lưu theo ID, phiên và byte Range |
 
 GET /api/overview trả csrf_token riêng phiên. Không có endpoint nhận path, shell,
 credential, cookie hay URL tùy ý. Run POST trả 202/run_id; click lặp cùng key trả
 lại run; khác key khi đang chạy trả 409. Media không có job đủ điều kiện trả 412.
-Body tối đa 4 KiB. Kết quả runner được chọn trường, stdout/log nằm ngoài Git.
+Body actions tối đa 4 KiB, content commands 16 KiB. Kết quả runner được chọn
+trường, stdout/log/media nằm ngoài Git. Các action workspace đã nối: batch/source/
+select/confirm/hold/unhold/revise/script/copy/edit/review/process/settings/search.
+Process chỉ created có renderer thật; selected trả lý do thiếu. Không nhận publish
+override/path/command hoặc trường provenance giả từ browser. Copy tăng copy_version;
+script/source thay tạo revision, worker update kiểm revision+run_id. Search official
+YouTube cần API key môi trường; replay thành công không gọi provider lần nữa.
 
 Các contract phase 2–5 sẽ bổ sung dưới /api/v1:
 
@@ -29,7 +38,7 @@ Những route sau chưa được tạo. Không dùng UI mock để báo chúng �
 
 ## Bổ sung cho console sản phẩm — planned
 
-Các contract sau thuộc P1–P4 của plan B-only, không phải route hiện có:
+Các contract mở rộng sau chưa phải route hiện có; xem plan hai video:
 
 | Route | Trách nhiệm |
 |---|---|
@@ -63,7 +72,7 @@ Các contract sau thuộc P1–P4 của plan B-only, không phải route hiện 
 | POST /api/v1/jobs/{id}/holds | expected_revision/reason; durable hold dùng chung manual/auto |
 | DELETE /api/v1/jobs/{id}/holds/{hold_id} | owner bỏ hold đúng revision; không tự publish chỉ vì bỏ hold |
 | GET /api/v1/jobs/{id}/timeline | progress thật, heartbeat, timecodes/artifacts, lỗi/next_action |
-| GET /api/v1/jobs/{id}/comparisons | nguồn/B/revisions, copy/link binding; không có nhánh A future |
+| GET /api/v1/jobs/{id}/comparisons | created/selected/nguồn/revisions, copy/link binding riêng |
 
 Confirmations bất biến hoặc revoked; tái dùng chỉ đúng source/hash/scope còn hiệu lực.
 Thông tin quyền thiếu không làm mất kết quả tìm kiếm hay tự thay nguồn đã chọn.
@@ -75,4 +84,4 @@ boolean “ready” thiếu lý do. Mutations kiểm session/CSRF/revision và q
 Public request thiếu điều kiện trả 412; conflict/race trả 409; 202 chỉ là đã nhận
 job, không phải đã đăng. Upload uncertain giữ reservation để đối chiếu, không retry mù.
 
-Xem [console B-only/đăng tay](b-only-console-plan.md) và [metric contracts](metrics-contract.md).
+Xem [console hai video](two-video-workflow.md) và [metric contracts](metrics-contract.md).

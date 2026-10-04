@@ -3,9 +3,10 @@
 ## Bản hiện tại trong repo
 
 Console → control API → adapter gọi đúng runner legacy.
-Control API đọc health/queue/báo cáo và lưu lịch sử riêng. Chỉ ba hành động được
-cho phép: trends, media, readiness. Không có arbitrary command, URL hoặc file path
-truyền từ trình duyệt tới runner. UI không có endpoint công khai video.
+Control API đọc health/queue/báo cáo và lưu lịch sử riêng; adapter chỉ gọi ba ID
+trends/media/readiness. Workspace SQLite lưu batch hai nhánh, source/hold/revision,
+copy/confirmation. Created adapter gọi công cụ voice/graphics/QC cố định trên host.
+URL nguồn chỉ metadata, không trở thành URL tải hoặc lệnh shell. UI chưa có endpoint public.
 
 ## Đích sau migration
 
@@ -17,8 +18,10 @@ flowchart TD
   Q --> D[Discover + product match + owned affiliate link]
   D --> SEL[Tìm/đề cử không lọc quyền; chủ chọn nguồn]
   SEL --> E[Chủ xác nhận nguồn; dùng lại xác nhận hợp lệ]
-  E --> B[B-only: edit nguồn/người được phép hoặc Flow shots xuyên suốt]
+  E --> B[Selected: xử lý chính video nguồn được phép / Flow edit]
+  D --> A[Created: script / voice / graphics / scenes tự dựng]
   B --> QC[Decode + nghe/xem + kiểm link/SKU]
+  A --> QC
   QC --> R[Review hoặc release policy theo tài khoản]
   R --> P[Publisher theo nền tảng]
   P --> V[Verify processing, vị trí link, URL bài đăng]
@@ -34,9 +37,9 @@ flowchart TD
 Giữ layout README. Mở rộng có mục tiêu, không tạo service cho mỗi folder:
 
 ```text
-apps/console/                views/components/api-client theo bảy khu vực (planned)
+apps/console/                workspace/source/output/settings views và bảy khu vực
 services/control-api/        routes/use-cases/read-models, không nhúng renderer
-packages/domain/            catalog/discovery/selection/content/release/metrics (planned)
+packages/domain/            two_video/publication contracts; catalog/metrics expansion planned
 services/connectors/         OAuth/capabilities/key refs, session metadata (planned)
 services/browser-worker/     profile local/Flow adapter/owner handoff (planned)
 services/media-worker/       source/edit/timeline/audio/QC (planned)
@@ -59,7 +62,7 @@ browser profile/token/DB/log; Git cá nhân chỉ code/config mẫu/docs/skills.
 | n8n | schedule, dependency giữa bước, retry safe reads, gửi ID job | giọng, render, secret trong Code node |
 | connectors | OAuth/API capability và refresh; session status | chọn nội dung hoặc tự bật thanh toán |
 | browser-worker (phase 3) | local persistent profile, mở login, thao tác UI Flow hợp lệ | export cookie hoặc xoá nguồn của video khác |
-| media-worker (phase 4) | Flow edit/composition, voice/captions/QC cho B | publish, sửa link tài khoản |
+| media-worker (phase 4) | created renderer và selected source/Flow edit, voice/captions/QC | publish, sửa link tài khoản |
 | publisher (phase 5) | upload reserve, account identity, final URL, reconciliation | tạo nội dung hoặc suy doanh thu |
 
 ## Trạng thái và dữ liệu
@@ -71,7 +74,8 @@ Các trạng thái phụ: needs_owner, blocked, failed, interrupted, paused.
 
 Mỗi bước có run_id, batch_id, job_id, revision, input_hash, artifact_sha256,
 started_at/completed_at, nguồn bằng chứng và expires_at. Bất kỳ sửa media/copy/
-SKU/account/link nào tạo revision và vô hiệu approval cũ. Review gắn đúng mã băm.
+SKU/account/link nào vô hiệu approval cũ. Media đổi tạo revision; copy đổi tăng
+copy_version và cần approval mới. Review gắn đúng mã băm và copy_version.
 Xác nhận nguồn gắn source/hash/phạm vi/hạn; tìm kiếm/ranking không lọc quyền.
 Back chỉ xem; rerun tạo revision và invalidation DAG. Lease/fencing ngăn worker
 cũ ghi kết quả vào bản mới; recommended_id không tự ghi đè selected_id.

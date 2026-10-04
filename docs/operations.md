@@ -16,7 +16,25 @@ Logs và database nằm .local/ và được ignore. Không gửi chúng lên Gi
 Mã legacy ở thư mục runtime không bị thay đổi bởi việc tạo repo này.
 Không di chuyển/xóa volume, session hoặc các publisher trong quá trình review.
 
-## Chuẩn review video B
+## Vận hành hai video và review
+
+Tạo batch trên console, sửa 5 cảnh created rồi Xử lý. Preview nằm trong Hai video;
+video thứ hai chọn từ Tổng hợp, xác nhận bởi chủ và lưu yêu cầu edit riêng.
+Đổi nguồn không làm mất created. Giữ/Bỏ giữ riêng từng bản; Làm lại tạo revision.
+Database content.sqlite và media nằm .local ngoài Git. Search API key đặt qua môi
+trường AFFILIATE_YOUTUBE_API_KEY, không nhập vào Git hoặc export credential.
+Nguồn thêm thủ công chỉ có URL/title chủ nhập; views/hook/creator chưa biết giữ unknown.
+Created chạy offline M31 trên host Mac; selected Flow runner chưa nối. Không có
+public publisher mới hoặc daily scheduler. Nút disabled là điều kiện thật chưa đủ.
+
+Danh sách nguồn: mở “Xem preview ngay tại đây” để xem YouTube nhúng, đóng để gỡ
+player; thumbnail không có nghĩa đã tải MP4. Nhánh chờ đăng có preview nội dung
+account/tiêu đề/mô tả/tag/link riêng. Bài đã đăng có public/private và nút xem kết
+quả riêng; bộ lọc thêm ID cho tiêu đề trùng. Bảng cuộn ngang trong khung trên mobile.
+“Cập nhật số liệu từ YouTube” gọi readiness hiện có, không xoá số liệu cũ nếu OAuth
+lỗi. Kết nối lại ở Settings trước khi thử lại. Chưa có retention/click/commission
+theo bài giữ “Chưa có dữ liệu”, không suy hoặc gán từ tổng. Form chưa lưu có hộp
+hỏi trong trang: Escape/“Giữ nội dung đang sửa” không mất draft; Tab chuyển hai nút.
 
 Xem toàn bộ MP4 và nghe cả âm thanh, không chỉ ảnh đầu/cuối. Ghi timecode cho
 hook chậm, giọng sai, phụ đề lệch, khung sản phẩm sai, cảnh đứt hoặc CTA không rõ.
@@ -31,8 +49,8 @@ dữ liệu riêng, không quy đổi view sang doanh thu.
 
 ## Phần vận hành đích chưa triển khai
 
-Đọc [plan B-only](b-only-console-plan.md) và [cases](workflow-cases.md). Không tạo A
-cho batch tương lai, không xoá bài A lịch sử. Tìm kiếm/ranking không lọc quyền;
+Đọc [plan hai video](two-video-workflow.md) và [cases](workflow-cases.md). Mỗi batch
+created+selected độc lập, không xoá bài lịch sử. Tìm kiếm/ranking không lọc quyền;
 chủ chọn rồi xác nhận nguồn. Settings có reuse_valid để bỏ hỏi lặp đúng source/hash/
 phạm vi; nguồn unknown vẫn chờ chủ và không tự bị thay bằng video khác.
 

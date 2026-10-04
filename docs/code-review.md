@@ -48,4 +48,6 @@ token expired hoặc revoked. Chưa xác định chính xác expired hay revoked
 kết nối qua chủ tài khoản. Không gọi upload/public release hoặc coi số liệu cũ là mới.
 Đây là lỗi connector legacy, không phải kết quả kiểm thử đơn vị của console.
 
-Đánh giá bổ sung sau khi chốt B-only: [hai lượt review](review-20261004-b-only.md).
+Đánh giá B-only trước là lịch sử: [review plan cũ](review-20261004-b-only.md).
+Yêu cầu mới nhất là hai nhánh độc lập. Xem [review triển khai và giao diện hai lượt](review-20261004-two-video.md)
+với 44 tests, renderer thật, preview/per-post results và những phần chưa nối.

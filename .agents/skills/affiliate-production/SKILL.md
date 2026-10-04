@@ -1,11 +1,13 @@
 ---
 name: affiliate-production
-description: Tạo, kiểm tra và vận hành video affiliate B-only, nguồn/chỉnh người được phép, link đúng SKU và xuất bản theo account/topic.
+description: Tạo và vận hành hai video affiliate độc lập — tự dựng và từ nguồn được chọn — với kiểm tra chất lượng, link đúng SKU và account/topic.
 ---
 
-Đọc docs/b-only-console-plan.md và docs/operations.md. Chỉ B cho job tương lai;
-không tạo A hoặc hai đầu ra ngầm. B cũ chỉ có intro không đáp ứng yêu cầu. Bài cũ
-và hash không đổi. Đọc requirements-matrix/workflow-cases khi nghiệm thu yêu cầu.
+Đọc docs/two-video-workflow.md và docs/operations.md. Mỗi batch đúng hai nhánh:
+created tự dựng, selected dùng chính video chọn từ danh sách. Không gộp, không
+đổi selected thành created hoặc chỉ chèn Flow intro. Source thay chỉ invalidate
+selected; script thay chỉ invalidate created. Bài/hash cũ không đổi. Đọc
+requirements-matrix/workflow-cases khi nghiệm thu; plan B-only trước là lịch sử.
 
 “Nhạy cảm” đã làm rõ là gây chú ý/tranh luận, không phải tình dục. Giữ raw query,
 tiêu chí/prompt Settings có version; đề cử có giải thích, selected tách recommended.

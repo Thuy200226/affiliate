@@ -1,4 +1,8 @@
-# Kế hoạch hiện hành — console và workflow chỉ video B
+# Kế hoạch B-only — lịch sử, đã bị thay thế
+
+Không dùng phạm vi B-only cho batch mới. Chủ làm rõ sau tài liệu này: một video
+tự làm và một video chọn từ danh sách. Xem [workflow hiện hành](two-video-workflow.md).
+Nội dung dưới đây giữ để đối chiếu quyết định trước đó, không là chỉ thị triển khai.
 
 Cập nhật 04/10/2026 theo các yêu cầu mới nhất. Đây là đặc tả/cổng nghiệm thu,
 không phải xác nhận tất cả chức năng đã triển khai. Thay thế hướng A/B của kế hoạch cũ.

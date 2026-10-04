@@ -6,14 +6,20 @@
   <title>Affiliate · Trung tâm vận hành</title>
   <link rel="stylesheet" href="/style.css">
   <script src="/app.js" defer></script>
+  <script src="/media-preview.js" defer></script>
+  <script src="/results-view.js" defer></script>
+  <script src="/workspace.js" defer></script>
+  <script src="/source-view.js" defer></script>
+  <script src="/output-view.js" defer></script>
+  <script src="/settings-view.js" defer></script>
 </head>
 <body>
   <aside>
     <div class="brand">a<span>ffiliate</span><small>TRUNG TÂM VẬN HÀNH</small></div>
-    <nav><a href="#overview">Tổng quan</a><a href="#workflows">Các luồng</a>
-      <a href="#formats">Hai định dạng</a><a href="#connections">Tài khoản</a>
-      <a href="#history">Lịch sử chạy</a></nav>
-    <div class="side-note">Bản quản lý cục bộ<br><span>Giai đoạn 1 · Kết nối hệ thống hiện có</span></div>
+    <nav><a href="#overview">Tổng quan</a><a href="#gathered">Nội dung tổng hợp</a>
+      <a href="#processing">Đang xử lý</a><a href="#formats">Hai video · chờ đăng</a>
+      <a href="#published">Đã đăng</a><a href="#results">Kết quả đăng</a><a href="#settings">Settings & Hướng dẫn</a></nav>
+    <div class="side-note">Hai video độc lập<br><span>Tự tạo + chọn từ danh sách nguồn</span></div>
   </aside>
   <main>
     <header id="overview"><div><p class="eyebrow">ĐIỀU KHIỂN & ĐÁNH GIÁ</p>
@@ -25,28 +31,39 @@
       <article><p>Tổng lượt xem đã ghi nhận</p><h2 id="views">—</h2></article>
       <article><p>Hoa hồng xác nhận</p><h2 id="commission">Chưa biết</h2></article></section>
     <p id="observed" class="muted"></p>
+    <p id="workspace-counts" class="muted"></p>
+    <div class="toolbar"><button id="new-batch">Tạo batch · 2 video</button>
+      <button id="refresh-workspace" class="secondary">Đọc lại nội dung</button>
+      <label>Batch đang quản lý <select id="batch-select" aria-label="Batch đang quản lý"></select></label></div>
+    <section id="gathered"><div class="section-head"><h2>Nội dung tổng hợp & video nguồn</h2><span>Chọn nguồn chỉ tác động video thứ hai</span></div><div id="sources"></div></section>
+    <section id="processing"><div class="section-head"><h2>Đang xử lý</h2><span>Bước thật từ bộ dựng</span></div><div id="processing-list"></div></section>
     <section id="workflows"><div class="section-head"><h2>Chạy từng luồng</h2><span>Nhận kết quả và lịch sử cho mỗi lần click</span></div>
       <div id="actions" class="cards"></div>
-      <div class="pipeline"><span>Trend</span><b>→</b><span>Sản phẩm + link</span><b>→</b><span>A / B</span>
+      <div class="pipeline"><span>Tìm sản phẩm/nguồn</span><b>→</b><span>Sản phẩm + link</span><b>→</b><span>Tự tạo + video đã chọn</span>
         <b>→</b><span>Kiểm tra & review</span><b>→</b><span>Đăng & đo</span></div>
       <details><summary>Các bước cần hoàn thiện để chạy hằng ngày</summary><ul id="blockers"></ul></details>
     </section>
-    <section id="formats"><div class="section-head"><h2>Hai hướng video</h2><span>Cùng sản phẩm, hai cách kể</span></div>
-      <div class="formats"><article class="format"><span class="pill">A · GIỌNG & ĐỒ HOẠ</span>
-        <h3>Thông tin rõ, nhịp nhanh</h3><p>Hook → giọng tự nhiên → chữ và chuyển động → CTA tới đúng sản phẩm.</p>
-        <div class="visual-a"><strong>Chọn đúng micro<br>cho điện thoại của bạn</strong><i></i><em>GIỌNG ĐỌC · PHỤ ĐỀ · ĐỒ HOẠ</em></div>
-        <p class="muted">Đã có bộ dựng legacy. Tự tạo brief mới chưa nối.</p></article>
-        <article class="format"><span class="pill">B · FLOW XUYÊN SUỐT</span>
-        <h3>Nhiều cảnh, một mạch kể</h3><p>Nghiên cứu nguồn → storyboard → nhiều cảnh Flow → ghép toàn bộ video → CTA.</p>
-        <div class="visual-b"><div>Cảnh 01</div><div>Cảnh 02</div><div>Cảnh 03</div></div>
-        <p class="muted">Cần cảnh khớp SKU và quyền nguồn. Bản chỉ có Flow intro chưa đạt.</p></article></div>
-    </section>
+    <section id="formats"><div class="section-head"><h2>Hai video · bản dựng và nội dung chờ đăng</h2><span>Không gộp thành một video</span></div><div id="outputs" class="formats"></div></section>
     <section id="connections"><div class="section-head"><h2>Tài khoản & đường mua</h2><span>Trạng thái, không hiển thị thông tin đăng nhập</span></div>
       <div id="accounts" class="accounts"></div>
       <p id="link-route"></p><p class="muted">Shorts: CTA dẫn qua link trên hồ sơ. Đường nhấp cần kiểm chứng mới trước lần đăng tiếp.</p>
     </section>
-    <section><div class="section-head"><h2>Video đã ghi nhận</h2><span>Trạng thái công khai/riêng tư từ báo cáo</span></div>
-      <div id="videos" class="video-list"></div></section>
+    <section id="published"><div class="section-head"><h2>Bài đăng đã ghi nhận</h2><span>Preview · trạng thái · kết quả riêng từng bài</span></div>
+      <div id="videos" class="published-grid"></div></section>
+    <section id="results"><div class="section-head"><h2>Kết quả đăng</h2><span>Số liệu có nguồn · không suy view thành hoa hồng</span></div>
+      <p id="results-status" class="data-status">Đang đọc số liệu từng bài…</p>
+      <div class="toolbar"><label>Chọn bài để kiểm tra <select id="result-filter"></select></label>
+        <button id="sync-results" class="secondary">Cập nhật số liệu từ YouTube</button></div>
+      <p class="muted table-hint">Vuốt hoặc cuộn ngang trong bảng để xem đủ chỉ số. Tên bài và ID giúp phân biệt các tiêu đề giống nhau.</p>
+      <div class="table-wrap" tabindex="0" role="region" aria-label="Bảng kết quả từng bài · cuộn ngang để xem đủ chỉ số"><table id="results-table"><caption>Kết quả từng video · không gán hoa hồng tổng cho từng bài</caption>
+        <thead><tr><th>Bài đăng</th><th>Hiển thị</th><th>Lượt xem</th><th>Thích</th><th>Bình luận</th><th>Giữ chân</th><th>Click sản phẩm</th><th>Hoa hồng duyệt</th><th>Quan sát</th></tr></thead>
+        <tbody id="results-rows"></tbody></table></div>
+      <p class="muted">Các ô chưa có dữ liệu là chưa được kết nối hoặc chưa có bằng chứng, không phải bằng 0. Nút cập nhật gọi luồng đọc hiện có; lỗi tài khoản được giữ nguyên và không xoá số liệu cũ.</p></section>
+    <section id="settings"><div class="section-head"><h2>Settings & Hướng dẫn</h2><span>Tìm kiếm, xác nhận nguồn, kết nối lại</span></div><div id="search-settings"></div>
+      <details><summary>Cách sử dụng từng bước</summary><ol><li>Tạo batch: hệ thống tạo đúng 2 nhánh.</li>
+        <li>Video 1: sửa kịch bản nếu cần, nhấn Xử lý để dựng trên máy.</li><li>Video 2: tìm/thêm URL nguồn, chọn một video, xác nhận nguồn và lưu yêu cầu edit.</li>
+        <li>Xem tiến độ, xem/nghe bản dựng. Giữ từng video hoặc làm lại bằng revision mới.</li>
+        <li>Chỉ đăng khi publisher, link, tài khoản và chất lượng đủ điều kiện; nút bị khoá ghi rõ còn thiếu.</li></ol></details></section>
     <section id="history"><div class="section-head"><h2>Lịch sử điều khiển</h2><span>Các lượt chạy từ trang này</span></div>
       <div class="table-wrap"><table><thead><tr><th>Luồng</th><th>Bắt đầu</th><th>Kết quả</th><th>Chi tiết</th></tr></thead><tbody id="runs"></tbody></table></div></section>
     <footer>Khả năng tự động hằng ngày đang được triển khai theo từng giai đoạn. Dữ liệu chưa có được giữ là “chưa biết”.</footer>

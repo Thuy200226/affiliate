@@ -1,8 +1,8 @@
-# Kiểm thử workflow B-only và hai lượt review
+# Kiểm thử workflow hai video và hai lượt review
 
 Ngày 04/10/2026. Đây là **ma trận cần triển khai**, không phải kết quả tests đã đạt.
 Kết quả thật được ghi riêng trong validation/audit report, theo phạm vi đã chạy.
-Tham chiếu: [plan](b-only-console-plan.md), [requirements](requirements-matrix.md).
+Tham chiếu: [plan](two-video-workflow.md), [requirements](requirements-matrix.md).
 
 ## Lượt 1 — review contracts và unit/domain tests
 
@@ -20,7 +20,7 @@ views/click giả hoặc mua hàng test. Review runtime khác unit tests của c
 
 | ID | Case | Kết quả bắt buộc |
 |---|---|---|
-| W01 | route future yêu cầu A hoặc intro-only | từ chối format, giữ bài legacy bất biến |
+| W01 | batch có một video tự tạo và một video chọn nguồn | đúng created+selected, không gộp hoặc giả source bằng created; bài cũ bất biến |
 | W02 | RSS trend chạy thành công nhưng không có video | discovery trống đúng nghĩa, không sinh URL/điểm giả |
 | W03 | kết quả không có SKU rõ | vẫn xem nghiên cứu; không tự gán link sản phẩm |
 | W04 | query gây tranh luận hợp lệ | raw query giữ nguyên, lý do provider từ chối hiển thị nếu có |
@@ -61,7 +61,7 @@ views/click giả hoặc mua hàng test. Review runtime khác unit tests của c
 | W39 | OAuth đọc metric lỗi | giữ snapshot+timestamp, stale/permission_error, không 0 |
 | W40 | vài bài có metric, vài bài thiếu | tổng đã biết + coverage, không tổng đầy đủ giả |
 | W41 | counter giảm hoặc kỳ trước=0 | điều chỉnh provider, không growth% vô hạn/xếp hạng giả |
-| W42 | hai B chung link/campaign | không cấp click per-video hoặc chia đều hoa hồng |
+| W42 | hai nhánh chung link/campaign | không cấp click per-video hoặc chia đều hoa hồng |
 | W43 | affiliate order/commission đổi trạng thái/import lại | dedupe theo nguồn, approved/paid riêng, không cộng trùng |
 | W44 | video private/technical test/đa-SKU | không tăng tổng public/SKU sai |
 | W45 | key/API/body/path/source URL bất thường | schema/CSRF/host/allowlist, không arbitrary command/SSRF/path traversal |

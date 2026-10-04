@@ -1,6 +1,7 @@
 const el = (id) => document.getElementById(id);
 let csrf = "";
 let busy = false;
+let announced = false;
 const pendingKeys = new Map();
 const labels = { trends: "Trend", media: "Video", readiness: "Kiểm tra" };
 const statuses = { running: "Đang chạy", succeeded: "Thành công", failed: "Thất bại", interrupted: "Bị ngắt · cần đối chiếu", uncertain: "Chưa rõ · cần đối chiếu" };
@@ -34,7 +35,7 @@ function date(value) {
 function link(url, text) {
   const item = node("a", text);
   const parsed = new URL(url);
-  if (parsed.protocol !== "https:") return node("span", text);
+  if (parsed.protocol !== "https:" && !(parsed.protocol === "http:" && ["localhost", "127.0.0.1"].includes(parsed.hostname))) return node("span", text);
   item.href = parsed.href;
   item.target = "_blank";
   item.rel = "noopener noreferrer";
@@ -71,8 +72,7 @@ function drawOverview(data) {
   }));
   el("link-route").replaceChildren(node("span", "Link đã cấu hình: "));
   el("link-route").append(data.affiliate_url ? link(data.affiliate_url, "Mở sản phẩm trên Shopee") : node("span", "Chưa có"));
-  el("videos").replaceChildren(...data.videos.filter((v) => /^[A-Za-z0-9_-]{11}$/.test(v.video_id)).map((v) =>
-    link(`https://www.youtube.com/watch?v=${v.video_id}`, `${v.video_id} · ${v.privacy_status === "public" ? "Công khai" : "Riêng tư"} · ${v.total_platform_views ?? "?"} lượt xem`)));
+  ResultsView.draw({...data, running:busy});
 }
 function drawRuns(data) {
   busy = data.runs.some((r) => r.status === "running");
@@ -88,6 +88,7 @@ async function refresh(showNotice = false) {
   try {
     const [overview, history] = await Promise.all([request("/api/overview"), request("/api/runs")]);
     drawRuns(history); drawOverview(overview);
+    if (!announced) {announced = true; document.dispatchEvent(new Event("affiliate-ready"));}
     if (showNotice) notice(busy ? "Một luồng đang chạy. Kết quả sẽ cập nhật tại lịch sử." : "Đã đọc trạng thái. Bạn có thể chạy từng luồng khả dụng bên dưới.");
   } catch (error) { notice(error.message, true); }
 }
@@ -104,5 +105,11 @@ async function run(flow) {
   await refresh();
 }
 el("refresh").addEventListener("click", () => refresh(true));
-refresh(true);
+el("sync-results").addEventListener("click", () => run("readiness"));
+window.AffiliateUI = {node, notice, request, date, link, csrf: () => csrf};
+document.querySelectorAll("nav a").forEach((item) => item.addEventListener("click", () => {
+  document.querySelectorAll("nav a").forEach((other) => {other.classList.remove("active"); other.removeAttribute("aria-current");});
+  item.classList.add("active"); item.setAttribute("aria-current", "location");
+}));
+window.addEventListener("DOMContentLoaded", () => refresh(true));
 setInterval(() => refresh(), 10000);

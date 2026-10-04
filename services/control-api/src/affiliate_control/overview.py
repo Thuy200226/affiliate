@@ -23,6 +23,13 @@ def affiliate_link(bridge):
     return None
 
 
+def post_record(video, source):
+    record = {key: video.get(key) for key in ("video_id", "title", "privacy_status", "total_platform_views", "likes", "comments")}
+    record.update(observed_at=source.get("checked_at"), metrics_source="current-published-videos.json",
+                  average_percentage_viewed=None, affiliate_clicks=None, confirmed_affiliate_commission=None)
+    return record
+
+
 def summarize(bridge):
     health = bridge.worker("health")
     queue = bridge.worker("jobs/next")
@@ -31,8 +38,8 @@ def summarize(bridge):
     trends = bridge.snapshot("artifacts/live-trends-current.json")
     latest_run = bridge.snapshot("artifacts/rerun-readiness.json")
     failed_api = latest_run.get("ok") is False and latest_run.get("error_type") == "NodeApiError"
-    videos = [{key: video.get(key) for key in ("video_id", "privacy_status", "total_platform_views")}
-              for video in source.get("videos", []) if video.get("kind") != "technical_test_not_affiliate"]
+    videos = [post_record(video, source) for video in source.get("videos", [])
+              if video.get("kind") != "technical_test_not_affiliate"]
     actions = []
     for key, (title, _) in ACTIONS.items():
         enabled, reason = bridge.eligible(key)
@@ -42,6 +49,7 @@ def summarize(bridge):
         "queue_job": queue.get("job_id"),
         "observed_at": source.get("checked_at"),
         "snapshot_fresh": fresh(source), "videos": videos,
+        "metrics_error": "Kết nối YouTube đang lỗi xác thực; cần đăng nhập lại. Số liệu cũ vẫn giữ, không coi là kết quả mới." if failed_api else None,
         "fully_automated": readiness.get("fully_automated_project") is True and fresh(readiness),
         "confirmed_commission": readiness.get("confirmed_affiliate_commission") if fresh(readiness) else None,
         "affiliate_url": affiliate_link(bridge),

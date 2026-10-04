@@ -11,13 +11,16 @@ Yêu cầu Python ≥3.12. Không cần cài thư viện cho bản quản lý c�
 python3 scripts/dev.py --runtime-root /absolute/path/to/affiliate-automation
 ```
 
-Mở http://127.0.0.1:8787. Có nút làm mới trend, kiểm tra hệ thống,
-chạy hàng đợi media đủ điều kiện và xem lịch sử. Media của runtime hiện tại tải riêng tư.
+Mở http://127.0.0.1:8787. Có bảy khu vực quản lý, batch gồm một video tự tạo và
+một video chọn từ danh sách; sửa kịch bản/copy/hashtag, giữ/làm lại từng bản, preview
+MP4 và lịch sử. Có nút gọi ba workflow legacy; media legacy tải riêng tư.
 Các bước chưa triển khai được hiển thị rõ, không có nút giả báo thành công.
+Video nguồn và bài công khai có thumbnail/player nhúng; nội dung chờ đăng có preview
+account/copy/tag/link. Kết quả lọc từng ID bài, giữ thời điểm và dữ liệu chưa biết.
 
 Trang này đọc các báo cáo đã có và gọi runner cho phép; không nhập lại workflow,
 không sao chép tài khoản. Nếu không truyền runtime, trang chạy ở chế độ chưa kết nối.
-Trạng thái/lịch sử/khóa phiên của trang nằm trong .local/, ngoài Git.
+Trạng thái/lịch sử/khóa phiên và media của trang nằm trong .local/, ngoài Git.
 
 ## Bố trí
 
@@ -46,16 +49,18 @@ Repository đã push lên `Thuy200226/affiliate`, dùng danh tính cá nhân ri�
 Xem [kế hoạch](docs/phases.md), [đánh giá code](docs/code-review.md),
 [kiến trúc](docs/architecture.md), [cách vận hành](docs/operations.md).
 
-Kế hoạch hiện hành: [console bảy khu vực và workflow B-only](docs/b-only-console-plan.md).
+Kế hoạch hiện hành: [hai nhánh video và console bảy khu vực](docs/two-video-workflow.md).
 [Đối chiếu yêu cầu](docs/requirements-matrix.md) và [ma trận ca kiểm thử](docs/workflow-cases.md)
-phân biệt chức năng cần làm với bằng chứng đã thực hiện. Kế hoạch A/B cũ là lịch sử.
+phân biệt chức năng cần làm với bằng chứng đã thực hiện. Plan B-only cũ đã bị thay thế.
 [Hợp đồng số liệu](docs/metrics-contract.md) quy định nguồn, kỳ đo và attribution.
-Đây là đặc tả tiếp theo; các màn hình/nút đăng mới chưa được triển khai.
-Xem [bằng chứng hai lượt review B-only](docs/review-20261004-b-only.md): test nền tảng
-đạt không có nghĩa source collector/Flow/publisher daily đã hoàn thành.
+Workspace/preview/renderer created đã nối; publisher mới và lịch daily chưa nối.
+Xem [hai lượt review triển khai](docs/review-20261004-two-video.md); tests console
+đạt không có nghĩa Flow/publisher daily hoặc kết quả kinh doanh đã hoàn thành.
 
 ## Mức hoàn thiện
 
-Đã có bộ quản lý cục bộ và adapter cho ba workflow hiện có. Chưa có dịch vụ
-đăng nhập xã hội mới, runner Flow không người trực, tự tạo B xuyên suốt mỗi ngày,
-hoặc tự công khai đa nền tảng. Các phần này có điều kiện nghiệm thu riêng trong kế hoạch.
+Created dùng bộ giọng/graphics offline của runtime Mac hiện có, giới hạn M31 để
+tránh dựng sai sản phẩm. Search API cần AFFILIATE_YOUTUBE_API_KEY trong môi trường
+cục bộ; không đưa key vào repo. Chọn và lưu URL web vẫn hoạt động khi chưa có key.
+Selected lưu selection/confirmation/edit request; runner Flow chưa nối. OAuth
+YouTube legacy đang cần refresh; publisher/daily/đa nền tảng chưa nghiệm thu.

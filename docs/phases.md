@@ -1,10 +1,10 @@
-# Lộ trình kỹ thuật — chỉ B cho nội dung tương lai
+# Lộ trình kỹ thuật — cập nhật hai nhánh
 
 Ngày lập: 04/10/2026. Ngân sách tiền mới: 0. Ưu tiên một topic/SKU và YouTube đã
-có kết nối trước, rồi mới mở rộng. Yêu cầu mới nhất bỏ A: chỉ B xuyên suốt; so sánh
-nguồn/B/revision, không tự tạo hai đầu ra thay yêu cầu cũ.
+có kết nối trước, rồi mới mở rộng. Yêu cầu mới nhất là đúng hai video: created
+tự dựng và selected từ danh sách nguồn, độc lập hold/revision/copy/artifact.
 
-Phân phase sản phẩm P0–P5 và bảy khu vực UI nằm trong [plan hiện hành](b-only-console-plan.md).
+Phân phase P0–P5 và bảy khu vực UI nằm trong [plan hiện hành](two-video-workflow.md).
 Các phase kỹ thuật dưới đây là phân rã hỗ trợ, không là lịch thứ hai. Nghiệm thu theo
 [yêu cầu](requirements-matrix.md), [cases](workflow-cases.md) và [hợp đồng số liệu](metrics-contract.md).
 
@@ -21,8 +21,10 @@ staged, xác định repository đích. Đã push main tới Thuy200226/affiliat
 Bản đầu trong repo: đọc trạng thái thật, nút chạy trends/readiness/media đủ điều kiện,
 lịch sử bền vững, khóa chạy, idempotency, phiên same-origin. Không fake bước chưa nối.
 
-Tiếp theo: preview media theo ID có kiểm soát; timeline từng scene; nhật ký từng
-bước và pause riêng các lịch của dự án sau khi chuyển scheduler về một chủ sở hữu.
+Đã thêm: workspace hai nhánh, preview MP4 theo ID/Range, nguồn/player nhúng và
+preview nội dung đăng; card bài/kết quả lọc ID và tuổi số liệu, bố cục responsive.
+Tiếp theo: timeline từng scene, catalog ảnh, nhật ký từng bước và pause riêng các
+lịch của dự án sau khi chuyển scheduler về một chủ sở hữu.
 Nghiệm thu: click và nhận run_id; restart không mất lịch sử; click lặp không chạy
 trùng; dữ liệu thiếu hiện “chưa biết”; lỗi được báo đúng bước.
 
@@ -39,7 +41,7 @@ phạm vi để bỏ hỏi lặp, không bypass nguồn chưa xác nhận. Khôn
 “Viral” dựa vào view velocity,
 engagement và thời điểm có nguồn; không lấy tổng views khác tuổi để xếp hạng đơn giản.
 
-Nghiệm thu: reserve cùng batch từ cron/UI chỉ có 1 batch B; không đổi fingerprint
+Nghiệm thu: reserve cùng batch từ cron/UI chỉ có 1 batch với đúng 2 nhánh; không đổi fingerprint
 của job cũ; selection/hold bền vững, fencing ngăn worker cũ ghi vào revision mới;
 TTL hết hạn thì refresh hoặc giữ lại đúng bước.
 
@@ -64,10 +66,12 @@ nội bộ hoặc trích xuất cookie để giả một API Veo miễn phí.
 Nghiệm thu: account identity đúng; session restart an toàn; không lộ credential;
 nguồn mỗi asset có hồ sơ; credit ledger và timeout; trạng thái blocked không loop vô hạn.
 
-## Phase 4 — B xuyên suốt và edit người có điều kiện
+## Phase 4 — Hai nhánh và edit nguồn/người có điều kiện
 
-B: source selection → xác nhận nguồn → chỉnh nguồn được phép hoặc storyboard mới
-→ Flow footage nhất quán toàn bộ khung hình → ghép → voice/subtitles tùy brief → CTA.
+Created: kịch bản riêng → giọng/graphics/scenes tự tạo → QC → CTA.
+Selected: source selection → xác nhận nguồn → chỉnh chính nguồn được phép trong
+Flow khi capability thật đáp ứng → ghép xuyên suốt → QC → CTA. Không âm thầm thay
+selected bằng storyboard created; nguồn mới cần selection/confirmation mới.
 Montage dùng ≥3 shots; một nguồn liền mạch cần ADR/validator thích hợp, không cắt giả
 để vượt kiểm tra legacy. Không chỉ thêm Flow intro rồi quay về đồ hoạ.
 Tái dùng cảnh có quyền trong thư viện và dựng bản mới theo topic để tiết kiệm tín dụng.
@@ -82,7 +86,7 @@ Hook có thể tương phản, hài hước hoặc gây tranh luận về lựa 
 thông tin kiểm chứng. “Nhạy cảm” là gây chú ý/tranh luận, không phải tình dục.
 Không bịa công dụng hay giả trải nghiệm.
 
-Nghiệm thu: B hoàn chỉnh; toàn bộ decode/voice/captions; nghe và xem toàn bộ,
+Nghiệm thu: cả hai đầu ra hoàn chỉnh; toàn bộ decode/voice/captions; nghe và xem toàn bộ,
 SKU nhất quán, không che watermark; bản chưa đạt không release. Kiểm tra kỹ thuật
 không tự suy thành video thu hút. Review rubric ghi rõ lỗi cần sửa theo timecode.
 
@@ -110,7 +114,7 @@ giới hạn client chưa audit ở private; phải xử lý điều kiện này
 
 ## Phase 6 — Lịch hằng ngày và đánh giá
 
-Scheduler theo Asia/Ho_Chi_Minh: thu thập nguồn → tạo batch → chạy B → release theo
+Scheduler theo Asia/Ho_Chi_Minh: thu thập nguồn → tạo batch → chạy hai nhánh → release theo
 account/topic → đo sau các mốc thời gian. Giờ cụ thể được chọn sau dữ liệu kênh;
 không tuyên bố một giờ đăng tốt nhất khi chưa có dữ liệu. Ban đầu daily cap 1 bài/
 account cho một loại nội dung; không đăng các revision gần trùng để lấp lịch.
@@ -118,7 +122,7 @@ Nguồn chưa xác nhận chờ chủ; nguồn có xác nhận còn hiệu lực
 mỗi 3h không thay cho lịch tạo/đăng daily, không tự đổi lịch legacy trong lượt lập plan.
 
 Queue có concurrency cap, retry safe reads, backoff, dead-letter và spending limit.
-Tín dụng Flow là quota riêng; hết quota thì giữ B chờ, không mua thêm hoặc bật API phí.
+Tín dụng Flow là quota riêng; hết quota giữ selected chờ, created không bị mất; không mua/API phí.
 Theo dõi dữ liệu đủ tuổi: exposure, stayed/swiped, completion, average percentage,
 organic clicks, đơn chờ, commission approved, paid amount. Tự-click tách riêng.
 

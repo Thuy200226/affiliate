@@ -46,12 +46,18 @@ EDITORS = {"copy": edit_copy, "script": edit_script, "edit": edit_request, "revi
 
 
 def validate_body(body):
+    from affiliate_domain.catalog import FIELDS
+    from .report_commands import FIELDS as REPORT_FIELDS
     schemas = {"settings": {"query", "order", "limit", "confirmation_mode"},
                "source": {"product_id", "url", "title", "creator"}, "batch": {"product_id"},
                "search": {"product_id"}, "select": {"source_id"}, "confirm": {"media_audio", "person_edit"},
                "hold": set(), "unhold": set(), "revise": set(), "process": set(),
                "copy": {"title", "description", "hashtags"}, "script": {"scenes"},
                "review": {"sha256", "watched_listened"}, "edit": {"request"}}
+    schemas.update(product=FIELDS, product_choice={"product_id", "choice"},
+                   link_verify={"product_id", "affiliate_url", "shop_id", "item_id", "variant", "account",
+                                "owner_generated", "destination_checked"})
+    schemas.update(affiliate_report=REPORT_FIELDS, post_control={"video_id", "choice", "confirm_id", "product_id"})
     fields = schemas.get(body.get("action"))
     if fields is None or set(body.get("data", {})) - fields:
         raise ValueError("Hành động hoặc trường dữ liệu chưa hỗ trợ.")

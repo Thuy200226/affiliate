@@ -1,7 +1,14 @@
 # Tài khoản, session và API
 
-Module đăng nhập xã hội mới chưa triển khai trong MVP. Console chỉ quan sát khả
-năng đã có qua báo cáo và adapter. Không nhập lại mật khẩu hoặc session hiện tại.
+Console đã có Settings cho chín công cụ: YouTube, YouTube search, Shopee, Flow,
+Gemini, TikTok, Instagram, Facebook, n8n. Module connections lưu key/token bằng
+macOS Keychain (helper native nhận qua stdin), SQLite chỉ lưu tool/saved_at.
+Không trả lại giá trị bí mật, không ghi vào args/log/response/Git.
+Nút mở Chrome dùng URL chính thức cố định, hồ sơ 0700 ở .local/browser-profiles.
+Hồ sơ mới không tự sao chép phiên Chrome chủ đang dùng. Login được giữ bởi Chrome;
+không xuất cookie/session. api_verified luôn false cho tới khi có probe identity/scope.
+YouTube search đã dùng key đã lưu; các key khác chưa chứng minh executor hoạt động.
+Linux/Docker chưa có Keychain/profile Mac; UI không giả thao tác này thành công.
 
 | Dịch vụ | Cách nối đích | Có thể tự động khi | Khi cần chủ tài khoản |
 |---|---|---|---|
@@ -26,6 +33,8 @@ generate_affiliate_link, upload_private, publish_public, attach_product, place_l
 Đăng nhập web không tự cấp những quyền này.
 
 Nguồn chính thức đã kiểm tra:
+[YouTube videos.delete](https://developers.google.com/youtube/v3/docs/videos/delete),
+[TikTok embed player](https://developers.tiktok.com/docs/en/embed-player),
 [YouTube videos.insert](https://developers.google.com/youtube/v3/docs/videos/insert),
 [n8n API authentication](https://github.com/n8n-io/n8n-docs/blob/main/docs/connect/n8n-api/authentication.md),
 [TikTok Direct Post](https://developers.tiktok.com/doc/content-posting-api-get-started/),

@@ -14,6 +14,11 @@ class ContentStore:
             db.execute("CREATE TABLE IF NOT EXISTS workspace (id INTEGER PRIMARY KEY, version INTEGER, data TEXT)")
             db.execute("CREATE TABLE IF NOT EXISTS commands (key TEXT PRIMARY KEY, digest TEXT, result TEXT)")
             db.execute("INSERT OR IGNORE INTO workspace VALUES (1,1,?)", (json.dumps(initial, ensure_ascii=False),))
+            from .content_migration import upgrade
+            row = db.execute("SELECT * FROM workspace WHERE id=1").fetchone()
+            state = json.loads(row["data"])
+            if upgrade(state):
+                db.execute("UPDATE workspace SET data=?,version=version+1 WHERE id=1", (json.dumps(state, ensure_ascii=False),))
 
     @contextmanager
     def connection(self):
@@ -72,11 +77,24 @@ class ContentStore:
             db.execute("UPDATE workspace SET data=?,version=version+1 WHERE id=1", (json.dumps(state, ensure_ascii=False),))
             return True
 
+    def system_update(self, mutate):
+        with self.connection() as db:
+            db.execute("BEGIN IMMEDIATE")
+            row = db.execute("SELECT * FROM workspace WHERE id=1").fetchone()
+            state = json.loads(row["data"])
+            result = mutate(state)
+            db.execute("UPDATE workspace SET data=?,version=version+1 WHERE id=1", (json.dumps(state, ensure_ascii=False),))
+            return result | {"version": row["version"] + 1}
+
     def recover(self):
         with self.connection() as db:
             row = db.execute("SELECT * FROM workspace WHERE id=1").fetchone()
             state = json.loads(row["data"])
             changed = False
+            for post in state.get("publication_controls", {}).values():
+                if post.get("deletion") == "deleting":
+                    post["deletion"] = "uncertain"
+                    changed = True
             for batch in state["batches"]:
                 for branch in batch["branches"].values():
                     if branch["status"] == "processing":

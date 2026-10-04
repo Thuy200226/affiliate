@@ -37,13 +37,19 @@ def render(runtime, root, batch, branch, progress):
         raise ValueError("Thiếu công cụ dựng cục bộ.")
     work = root / "media" / branch["run_id"]
     work.mkdir(parents=True, exist_ok=False, mode=0o700)
-    default_scenes = scene_plan(batch["product"])
+    from .generic_plan import scenes as generic_scenes
+    known_m31 = (batch["product"].get("shop_id"), batch["product"].get("item_id")) == ("928446709", "24035184620")
+    default_scenes = scene_plan(batch["product"]) if known_m31 else generic_scenes(batch["product"])
     scenes = branch.get("scenes") or default_scenes
     manifest = work / "manifest.json"
     manifest.write_text(json.dumps({"job_id": batch["id"], "scenes": scenes}, ensure_ascii=False))
     tools = runtime / "upgrade"
     progress("Kiểm bố cục và chuẩn bị giọng")
-    command(["/usr/bin/swift", str(tools / "preflight_local_video.swift"), str(manifest)], work, "preflight", 60)
+    if known_m31:
+        command(["/usr/bin/swift", str(tools / "preflight_local_video.swift"), str(manifest)], work, "preflight", 60)
+    else:
+        from .generic_renderer import binary
+        command([str(binary(root, work, command)), str(manifest), "--check"], work, "preflight-generic", 60)
     progress("Đang tạo giọng Trúc Ly trên máy")
     command([str(tools / ".venv-voice/bin/python"), str(tools / "local_neural_voice.py"),
              str(manifest), str(work), "--voice", "Trúc Ly"], work, "voice", 300)
@@ -52,9 +58,12 @@ def render(runtime, root, batch, branch, progress):
     manifest.write_text(json.dumps({"job_id": batch["id"], "scenes": scenes}, ensure_ascii=False))
     progress("Đang dựng chuyển động, giọng và chữ")
     base, output = work / "base.mp4", work / "video.mp4"
-    command([str(tools / "render_local_affiliate_v3"), str(manifest), str(work), str(base)], work, "render", 300)
-    # This removes our own legacy footer, not any third-party source/watermark.
-    command(["/usr/bin/swift", str(tools / "render_flow_hybrid_preview.swift"), str(base), "-", str(output)], work, "compose", 180)
+    if known_m31:
+        command([str(tools / "render_local_affiliate_v3"), str(manifest), str(work), str(base)], work, "render", 300)
+        command(["/usr/bin/swift", str(tools / "render_flow_hybrid_preview.swift"), str(base), "-", str(output)], work, "compose", 180)
+    else:
+        from .generic_renderer import render as generic_render
+        generic_render(root, work, manifest, output, command)
     progress("Giải mã toàn bộ và kiểm tra âm thanh")
     inspection = work / "inspection"
     inspection.mkdir()

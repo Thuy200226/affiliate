@@ -13,9 +13,16 @@ X-CSRF-Token; API không cấp quyền chạy khi chỉ biết URL. GET / tạo 
 | GET | /api/content | workspace hai nhánh + capabilities/blockers thật |
 | POST | /api/content/commands | action/data/batch_id/kind/expected_version/idempotency_key |
 | GET | /api/content/media/{batch_id}/{kind}/{revision} | MP4 đã lưu theo ID, phiên và byte Range |
+| GET | /api/content/source-media/{source_id} | MP4 nguồn đã nhận, phiên/containment/Range |
+| POST | /api/content/upload | video/mp4 trực tiếp; target/ID/version qua header; tối đa 100 MB / 180 giây |
+| GET | /api/connections | metadata chín công cụ, không có secrets/cookies |
+| POST | /api/connections/{save,remove,open} | tool cố định; save nhận value qua JSON cục bộ vào Keychain |
+| POST | /api/posts/delete | video_id/confirm_id/permanent/version/idempotency; ownership probe trước DELETE |
 
 GET /api/overview trả csrf_token riêng phiên. Không có endpoint nhận path, shell,
-credential, cookie hay URL tùy ý. Run POST trả 202/run_id; click lặp cùng key trả
+cookie, shell hoặc đường dẫn tùy ý. Key chỉ nhận qua route save giới hạn; không trả
+key lại UI. URL tham chiếu video/catalog kiểm ở domain, không cho server fetch URL
+nguồn bất kỳ. Run POST trả 202/run_id; click lặp cùng key trả
 lại run; khác key khi đang chạy trả 409. Media không có job đủ điều kiện trả 412.
 Body actions tối đa 4 KiB, content commands 16 KiB. Kết quả runner được chọn
 trường, stdout/log/media nằm ngoài Git. Các action workspace đã nối: batch/source/
@@ -23,7 +30,19 @@ select/confirm/hold/unhold/revise/script/copy/edit/review/process/settings/searc
 Process chỉ created có renderer thật; selected trả lý do thiếu. Không nhận publish
 override/path/command hoặc trường provenance giả từ browser. Copy tăng copy_version;
 script/source thay tạo revision, worker update kiểm revision+run_id. Search official
-YouTube cần API key môi trường; replay thành công không gọi provider lần nữa.
+YouTube cần API key môi trường hoặc Keychain; replay thành công không gọi provider lần nữa.
+
+Các mutation đã bổ sung: product/product_choice/link_verify/affiliate_report/post_control.
+Catalog giữ shop/item/variant/account/platform/placement; sửa catalog không đổi batch
+lịch sử và invalidate đối chiếu link khi identity đổi. Bỏ qua giữ hai nhánh; khôi
+phục không tự bỏ hold. Report có clicks/total_orders/estimated_commission và các
+trường pending/approved/paid riêng; null không đổi thành 0, cùng phạm vi/kỳ cập nhật
+không cộng trùng. Mapping bài do chủ khai báo chưa là bằng chứng link đã đặt trên bài.
+Upload dùng X-Media-Target (source/selected), X-Media-Id và X-Workspace-Version;
+full decode/hash/duration/dimensions trước attachment. Nhận nguồn invalidate selected
+khớp source_id, không sửa created. Bản sau xử lý cần xác nhận đúng hash nguồn.
+Xoá reserve trước DELETE, kiểm account/video bằng OAuth YouTube; crash/timeout giữ
+uncertain, không tự gửi lại. Không có endpoint xoá tuỳ ý ID ngoài registry.
 
 Các contract phase 2–5 sẽ bổ sung dưới /api/v1:
 

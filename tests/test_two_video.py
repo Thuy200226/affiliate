@@ -44,9 +44,10 @@ class TwoVideoTests(unittest.TestCase):
         self.assertEqual(branch["history"][0]["artifact"]["sha256"], "old")
         self.assertIn("giữ", process_blockers(branch, {"created_renderer": True})[0])
 
-    def test_normalize_only_supported_provider_video_urls(self):
+    def test_normalize_multiple_provider_reference_urls(self):
         self.assertEqual(source_url("https://youtu.be/ddY5Hh29VhE?t=1"), self.source["url"])
-        for url in ("http://youtube.com/watch?v=ddY5Hh29VhE", "https://evil.test/file.mp4",
+        self.assertEqual(source_url("https://example.org/video/1?tracking=1"),"https://example.org/video/1")
+        for url in ("http://youtube.com/watch?v=ddY5Hh29VhE", "https://127.0.0.1/file.mp4",
                     "https://x@youtUbe.com/watch?v=ddY5Hh29VhE", "https://youtube.com:123/watch?v=ddY5Hh29VhE"):
             with self.assertRaises(ValueError):
                 source_url(url)

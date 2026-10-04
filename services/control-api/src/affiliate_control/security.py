@@ -65,7 +65,7 @@ HEADERS = {
     "X-Content-Type-Options": "nosniff",
     "X-Frame-Options": "DENY",
     "Referrer-Policy": "same-origin",
-    "Content-Security-Policy": "default-src 'self'; img-src 'self' https://i.ytimg.com; style-src 'self'; "
-    "script-src 'self'; connect-src 'self'; frame-src https://www.youtube-nocookie.com; object-src 'none'; frame-ancestors 'none'; "
+    "Content-Security-Policy": "default-src 'self'; img-src 'self' https://i.ytimg.com https://down-vn.img.susercontent.com https://cf.shopee.vn; style-src 'self'; "
+    "script-src 'self'; connect-src 'self'; frame-src https://www.youtube-nocookie.com https://www.tiktok.com; object-src 'none'; frame-ancestors 'none'; "
     "base-uri 'none'; form-action 'self'",
 }

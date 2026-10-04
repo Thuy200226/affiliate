@@ -7,6 +7,11 @@
   <link rel="stylesheet" href="/style.css">
   <script src="/app.js" defer></script>
   <script src="/media-preview.js" defer></script>
+  <script src="/media-intake.js" defer></script>
+  <script src="/catalog-view.js" defer></script>
+  <script src="/post-actions.js" defer></script>
+  <script src="/affiliate-view.js" defer></script>
+  <script src="/connections-view.js" defer></script>
   <script src="/results-view.js" defer></script>
   <script src="/workspace.js" defer></script>
   <script src="/source-view.js" defer></script>
@@ -16,14 +21,14 @@
 <body>
   <aside>
     <div class="brand">a<span>ffiliate</span><small>TRUNG TÂM VẬN HÀNH</small></div>
-    <nav><a href="#overview">Tổng quan</a><a href="#gathered">Nội dung tổng hợp</a>
+    <nav><a href="#overview">Tổng quan</a><a href="#catalog">Sản phẩm & ưu tiên</a><a href="#gathered">Nguồn video</a>
       <a href="#processing">Đang xử lý</a><a href="#formats">Hai video · chờ đăng</a>
-      <a href="#published">Đã đăng</a><a href="#results">Kết quả đăng</a><a href="#settings">Settings & Hướng dẫn</a></nav>
+      <a href="#published">Đã đăng</a><a href="#results">Kết quả đăng</a><a href="#affiliate">Shopee & hoa hồng</a><a href="#settings">Cài đặt & đăng nhập</a></nav>
     <div class="side-note">Hai video độc lập<br><span>Tự tạo + chọn từ danh sách nguồn</span></div>
   </aside>
   <main>
     <header id="overview"><div><p class="eyebrow">ĐIỀU KHIỂN & ĐÁNH GIÁ</p>
-      <h1>Nội dung tốt. Luồng rõ ràng.</h1><p>Theo dõi sản phẩm, video và đường tới link của bạn.</p></div>
+      <h1>Từ sản phẩm đến bài đăng.</h1><p>Chọn sản phẩm. So sánh hai video. Theo dõi kết quả tại từng bài.</p></div>
       <button id="refresh" class="secondary">Làm mới màn hình</button></header>
     <div id="notice" role="status">Đang đọc trạng thái…</div>
     <section class="metrics" aria-label="Tình trạng"><article><p>Dịch vụ dựng</p><h2 id="worker">—</h2></article>
@@ -32,6 +37,9 @@
       <article><p>Hoa hồng xác nhận</p><h2 id="commission">Chưa biết</h2></article></section>
     <p id="observed" class="muted"></p>
     <p id="workspace-counts" class="muted"></p>
+    <div class="step-guide"><a href="#catalog"><b>01</b> Chọn sản phẩm</a><a href="#gathered"><b>02</b> Tìm & chọn nguồn</a><a href="#formats"><b>03</b> Xem hai bản</a><a href="#published"><b>04</b> Bài & kết quả</a></div>
+    <section id="catalog"><div class="section-head"><h2>Sản phẩm đã tổng hợp</h2><span>Nhiều nhóm hàng · chọn làm trước / bỏ qua</span></div>
+      <p class="muted">Chọn “Xem nguồn & video” để chuyển sản phẩm đang quản lý. Tạo batch để làm hai video riêng của sản phẩm đó.</p><div id="catalog-list"></div></section>
     <div class="toolbar"><button id="new-batch">Tạo batch · 2 video</button>
       <button id="refresh-workspace" class="secondary">Đọc lại nội dung</button>
       <label>Batch đang quản lý <select id="batch-select" aria-label="Batch đang quản lý"></select></label></div>
@@ -49,6 +57,7 @@
       <p id="link-route"></p><p class="muted">Shorts: CTA dẫn qua link trên hồ sơ. Đường nhấp cần kiểm chứng mới trước lần đăng tiếp.</p>
     </section>
     <section id="published"><div class="section-head"><h2>Bài đăng đã ghi nhận</h2><span>Preview · trạng thái · kết quả riêng từng bài</span></div>
+      <label class="inline-check"><input type="checkbox" id="show-archived">Hiện cả bài đã ẩn trong bảng quản lý</label>
       <div id="videos" class="published-grid"></div></section>
     <section id="results"><div class="section-head"><h2>Kết quả đăng</h2><span>Số liệu có nguồn · không suy view thành hoa hồng</span></div>
       <p id="results-status" class="data-status">Đang đọc số liệu từng bài…</p>
@@ -59,11 +68,16 @@
         <thead><tr><th>Bài đăng</th><th>Hiển thị</th><th>Lượt xem</th><th>Thích</th><th>Bình luận</th><th>Giữ chân</th><th>Click sản phẩm</th><th>Hoa hồng duyệt</th><th>Quan sát</th></tr></thead>
         <tbody id="results-rows"></tbody></table></div>
       <p class="muted">Các ô chưa có dữ liệu là chưa được kết nối hoặc chưa có bằng chứng, không phải bằng 0. Nút cập nhật gọi luồng đọc hiện có; lỗi tài khoản được giữ nguyên và không xoá số liệu cũ.</p></section>
-    <section id="settings"><div class="section-head"><h2>Settings & Hướng dẫn</h2><span>Tìm kiếm, xác nhận nguồn, kết nối lại</span></div><div id="search-settings"></div>
-      <details><summary>Cách sử dụng từng bước</summary><ol><li>Tạo batch: hệ thống tạo đúng 2 nhánh.</li>
-        <li>Video 1: sửa kịch bản nếu cần, nhấn Xử lý để dựng trên máy.</li><li>Video 2: tìm/thêm URL nguồn, chọn một video, xác nhận nguồn và lưu yêu cầu edit.</li>
+    <section id="affiliate"><div class="section-head"><h2>Shopee Affiliate & hoa hồng</h2><span>Click · đơn chờ · hoa hồng duyệt · tiền đã trả</span></div><div id="affiliate-stats"></div></section>
+    <section id="settings"><div class="section-head"><h2>Cài đặt & hướng dẫn</h2><span>Từ khoá, đăng nhập Chrome, key từng công cụ</span></div><div id="search-settings"></div>
+      <div id="tool-settings" class="connection-grid"></div>
+      <details open><summary>Cách sử dụng từng bước</summary><ol><li>Thêm/chọn sản phẩm: nhập đúng Shop ID, Item ID, biến thể và link affiliate của tài khoản bạn. Chọn làm trước hoặc bỏ qua.</li>
+        <li>Tạo batch: hệ thống tạo đúng 2 nhánh, giữ snapshot riêng của sản phẩm.</li>
+        <li>Video 1: sửa kịch bản nếu cần, nhấn Xử lý để dựng trên máy.</li><li>Video 2: tìm/thêm URL, nhận MP4 nguồn, chọn một video và xác nhận đúng tệp. Nhận bản xử lý để xem trước/sau tại đây.</li>
         <li>Xem tiến độ, xem/nghe bản dựng. Giữ từng video hoặc làm lại bằng revision mới.</li>
-        <li>Chỉ đăng khi publisher, link, tài khoản và chất lượng đủ điều kiện; nút bị khoá ghi rõ còn thiếu.</li></ol></details></section>
+        <li>Chỉ đăng khi publisher, link, tài khoản và chất lượng đủ điều kiện; nút bị khoá ghi rõ còn thiếu.</li>
+        <li>Đã đăng: xem kết quả tại từng bài, đối chiếu bài với sản phẩm. Ẩn khỏi bảng không xoá bài; xoá nền tảng cần gõ ID và xác nhận lần cuối.</li>
+        <li>Cài đặt: mở Chrome với hồ sơ cục bộ riêng để đăng nhập lại. API key/token lưu Keychain, không xuất phiên đăng nhập.</li></ol></details></section>
     <section id="history"><div class="section-head"><h2>Lịch sử điều khiển</h2><span>Các lượt chạy từ trang này</span></div>
       <div class="table-wrap"><table><thead><tr><th>Luồng</th><th>Bắt đầu</th><th>Kết quả</th><th>Chi tiết</th></tr></thead><tbody id="runs"></tbody></table></div></section>
     <footer>Khả năng tự động hằng ngày đang được triển khai theo từng giai đoạn. Dữ liệu chưa có được giữ là “chưa biết”.</footer>

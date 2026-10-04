@@ -16,3 +16,8 @@ thực tế; không lặp thông báo nếu cùng bước vẫn chờ và không
 
 Kiểm connector bằng account identity + scope + hành động có thể làm. Báo khả năng
 chưa chứng minh là unknown. Sau auth, tiếp tục job từ bước bị chặn thay vì tạo batch mới.
+
+connections.py có 9 tool, Keychain native Mac và hồ sơ Chrome riêng. Chỉ YouTube
+search đã đọc key được lưu; đừng coi key_saved/profile_exists là scope/login thành
+công. Profile mới không sao chép login Chrome hiện có. Không thử xoá bài thật để
+test post_deletion; mock ownership/DELETE và giữ uncertain khi timeout/crash.

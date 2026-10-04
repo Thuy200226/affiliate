@@ -21,3 +21,8 @@ Không activate/import publisher legacy để thử một refactor.
 Yêu cầu hiện hành ở docs/two-video-workflow.md và requirements-matrix.md; B-only
 cũ chỉ lịch sử. Khi thêm transition/Settings/source picker/publisher, dùng ma trận
 workflow-cases.md và review hai lượt; không ghi planned API/UI là đã vận hành.
+
+Mở rộng nhiều sản phẩm hiện có ở catalog/source_links, catalog_commands,
+report_commands, uploads và connections. Đọc docs/review-20261004-catalog.md
+khi sửa những đường này; test UI fixture bằng scripts/qa_console.py, không seed
+sản phẩm/link giả vào workspace thật. Catalog đổi không sửa batch lịch sử.

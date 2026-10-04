@@ -16,6 +16,7 @@ def find(items, ident):
 
 
 def add_source(state, data):
+    from affiliate_domain.source_links import provider
     product = find(state["products"], data["product_id"])
     url = source_url(data["url"])
     prior = next((s for s in state["sources"] if s["url"] == url and s["product_id"] == product["id"]), None)
@@ -27,7 +28,7 @@ def add_source(state, data):
               "title": text(data["title"], 180), "creator": text(data.get("creator", "Chưa biết"), 120),
               "method": data.get("method", "owner_entry_not_provider_verified"), "observed_at": stamp(),
               "published_at": data.get("published_at"), "query": data.get("query", state["settings"]["query"]),
-              "views": None, "hook_score": None, "rights": "awaiting_owner"}
+              "views": None, "hook_score": None, "rights": "awaiting_owner", "provider": provider(url)}
     state["sources"].append(source)
     return source
 
@@ -56,6 +57,8 @@ def batch_command(state, body, capabilities):
     elif action in EDITORS:
         EDITORS[action](branch, data)
     elif action == "process":
+        if find(state["products"], batch["product"]["id"]).get("status") == "skipped":
+            raise ValueError("Sản phẩm đang bỏ qua; khôi phục trước khi xử lý.")
         reasons = process_blockers(branch, capabilities)
         if reasons:
             raise ValueError(" · ".join(reasons))
@@ -70,17 +73,28 @@ def batch_command(state, body, capabilities):
 def reuse_confirmation(state, branch):
     if state["settings"]["confirmation_mode"] != "reuse_valid":
         return
+    source = find(state["sources"], branch["source_id"])
+    asset_hash = source.get("asset", {}).get("sha256")
     for batch in reversed(state["batches"]):
         prior = batch["branches"]["selected"]
         confirmation = prior.get("confirmation")
         valid = confirmation and datetime.fromisoformat(confirmation["expires_at"]) > datetime.now(timezone.utc)
-        if prior["source_id"] == branch["source_id"] and valid:
+        if (prior["source_id"] == branch["source_id"] and valid and confirmation.get("url") == source["url"]
+                and confirmation.get("asset_hash") == asset_hash):
             branch["confirmation"] = deepcopy(prior["confirmation"])
             break
 
 
 def mutate(state, body, capabilities):
     action, data = body["action"], body.get("data", {})
+    from .catalog_commands import COMMANDS
+    from .report_commands import save, post_control
+    if action == "affiliate_report":
+        return save(state, data)
+    if action == "post_control":
+        return post_control(state, data)
+    if action in COMMANDS:
+        return COMMANDS[action](state, data)
     if action == "settings":
         query = text(data["query"], 250)
         if (data.get("order") not in ("relevance", "date", "viewCount") or type(data.get("limit")) is not int
@@ -93,7 +107,11 @@ def mutate(state, body, capabilities):
     if action == "batch":
         if len(state["batches"]) >= 100:
             raise ValueError("Đã đủ 100 batch; cần lưu trữ lịch sử trước khi tạo thêm.")
-        batch = new_batch(find(state["products"], data["product_id"]), state["settings"])
+        product = find(state["products"], data["product_id"])
+        if product.get("status") == "skipped":
+            raise ValueError("Sản phẩm đang bỏ qua; khôi phục trước khi làm video.")
+        profile = state["settings"] | {"query": product.get("query") or state["settings"]["query"]}
+        batch = new_batch(product, profile)
         initialize_branch(batch)
         state["batches"].append(batch)
         return {"batch_id": batch["id"]}

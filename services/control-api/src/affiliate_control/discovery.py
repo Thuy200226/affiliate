@@ -11,8 +11,8 @@ def configured():
     return bool(os.environ.get("AFFILIATE_YOUTUBE_API_KEY"))
 
 
-def search(profile):
-    key = os.environ.get("AFFILIATE_YOUTUBE_API_KEY")
+def search(profile, key=None):
+    key = key or os.environ.get("AFFILIATE_YOUTUBE_API_KEY")
     if not key:
         raise ValueError("Chưa cấu hình kết nối tìm kiếm YouTube; có thể mở tìm kiếm web và thêm URL nguồn.")
     query = urlencode({"part": "snippet", "type": "video", "q": profile["query"],

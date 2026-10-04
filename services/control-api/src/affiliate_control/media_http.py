@@ -3,6 +3,11 @@ import re
 
 
 def serve(handler):
+    source = re.fullmatch(r"/api/content/source-media/([a-f0-9-]{36})", handler.path)
+    if source:
+        app = handler.server.app
+        item = next((s for s in app.content.store.read()["sources"] if s["id"] == source[1]), None)
+        return send(handler, item.get("asset") if item else None)
     match = re.fullmatch(r"/api/content/media/([a-f0-9-]{36})/(created|selected)/([0-9]+)", handler.path)
     if not match:
         return False
@@ -16,8 +21,15 @@ def serve(handler):
     if not version:
         handler.reply(404, {"error": "Không có bản video này."})
         return True
-    root = app.settings.state.resolve()
-    file = (root / version["artifact"]["relative_path"]).resolve()
+    return send(handler, version["artifact"])
+
+
+def send(handler, artifact):
+    if not artifact:
+        handler.reply(404, {"error": "Chưa nhận tệp nguồn."})
+        return True
+    root = handler.server.app.settings.state.resolve()
+    file = (root / artifact["relative_path"]).resolve()
     if not file.is_relative_to(root / "media") or not file.is_file():
         handler.reply(404, {"error": "Tệp video chưa khả dụng."})
         return True

@@ -58,7 +58,7 @@ function drawActions(actions) {
 function drawOverview(data) {
   csrf = data.csrf_token;
   el("worker").textContent = data.worker_ok ? "Khả dụng" : "Chưa kết nối";
-  const publicVideos = data.videos.filter((v) => v.privacy_status === "public");
+  const publicVideos = data.videos.filter((v) => v.privacy_status === "public" && v.control?.deletion !== "deleted_on_youtube");
   el("count").textContent = publicVideos.length;
   const counts = publicVideos.map((v) => v.total_platform_views);
   el("views").textContent = counts.length && counts.every((v) => v !== null && v !== undefined)
@@ -106,7 +106,7 @@ async function run(flow) {
 }
 el("refresh").addEventListener("click", () => refresh(true));
 el("sync-results").addEventListener("click", () => run("readiness"));
-window.AffiliateUI = {node, notice, request, date, link, csrf: () => csrf};
+window.AffiliateUI = {node, notice, request, date, link, csrf: () => csrf, refreshOverview:refresh};
 document.querySelectorAll("nav a").forEach((item) => item.addEventListener("click", () => {
   document.querySelectorAll("nav a").forEach((other) => {other.classList.remove("active"); other.removeAttribute("aria-current");});
   item.classList.add("active"); item.setAttribute("aria-current", "location");

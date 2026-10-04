@@ -8,20 +8,27 @@ const OutputView = (() => {
     if (!batch) {outputs.append(ui().node("p", "Tạo batch để quản lý đúng hai video riêng biệt.")); return;}
     for (const kind of ["created", "selected"]) {
       const branch = batch.branches[kind], card = ui().node("article", undefined, "output-card");
-      card.append(ui().node("h3", labels[kind]), ui().node("p", `Revision ${branch.revision} · ${states[branch.status]}${branch.hold ? " · ĐANG GIỮ" : ""}`, "pill"));
+      const status = branch.status === "ready" && branch.artifact?.origin === "owner_uploaded_not_flow_verified" ? "Đã nhận tệp · chờ đánh giá" : states[branch.status];
+      card.append(ui().node("h3", labels[kind]), ui().node("p", `Revision ${branch.revision} · ${status}${branch.hold ? " · ĐANG GIỮ" : ""}`, "pill"));
       if (branch.status === "processing") processing.append(ui().node("p", `${labels[kind]}: ${branch.notes.join(" · ")}`));
       if (branch.artifact) {
         const video = ui().node("video"); video.controls = true; video.preload = "metadata";
-        video.src = `/api/content/media/${batch.id}/${kind}/${branch.revision}`;
+        video.src = `/api/content/media/${batch.id}/${kind}/${branch.revision}`; video.setAttribute("aria-label",kind === "selected" ? "Sau xử lý · tệp đã nhận" : "Video tự dựng");
         card.append(video, ui().node("p", `${branch.artifact.duration_seconds.toFixed(2)} giây · ${branch.artifact.width}×${branch.artifact.height} · kiểm kỹ thuật đạt`, "muted"));
         const download = ui().node("a", "Tải MP4 để đăng tay", "source-link"); download.href = video.src;
-        download.download = `m31-${kind}-r${branch.revision}.mp4`; card.append(download);
+        download.download = `${batch.product.item_id}-${kind}-r${branch.revision}.mp4`; card.append(download);
         card.append(manualPackage(batch, branch));
         card.append(Workspace.button(branch.artifact.perceptual_reviewed ? "Đã đánh giá chất lượng" : "Đã xem/nghe và duyệt chất lượng", "review", {sha256: branch.artifact.sha256, watched_listened: true}, kind, branch.artifact.perceptual_reviewed));
         card.append(publicationPreview(batch, branch));
-      } else card.append(ui().node("div", branch.notes.join(" · ") || "Chưa có tệp hoàn chỉnh. Chọn nguồn và xử lý để xem bản cuối tại đây.", "pending-preview"));
+      } else card.append(ui().node("div", branch.notes.join(" · ") || (kind === "created" ? "Chưa có bản dựng. Sửa lời đọc/chữ ở dưới nếu cần, rồi nhấn Xử lý video này." :
+        "Chưa có tệp hoàn chỉnh. Chọn nguồn, nhận MP4 và đối chiếu để xử lý video thứ hai."), "pending-preview"));
       const source = state.sources.find((s) => s.id === branch.source_id);
       if (source) card.append(ui().link(source.url, "Xem video nguồn đã chọn"));
+      if (kind === "selected" && source) {
+        if (source.asset) card.append(MediaIntake.local(`/api/content/source-media/${source.id}`, "Trước xử lý · video nguồn"));
+        card.append(MediaIntake.form(state,"selected",batch.id));
+        card.append(ui().node("p", "Đổi mặt chưa được runner thực hiện. Tệp nhận được không tự coi là đã đổi mặt; đối chiếu đúng người/sản phẩm và đồng ý chỉnh hình trước khi dùng.", "muted"));
+      }
       const buttons = ui().node("div", undefined, "toolbar"), process = Workspace.button("Xử lý video này", "process", {}, kind, branch.process_blockers.length > 0);
       process.title = branch.process_blockers.join(" · ");
       buttons.append(process, Workspace.button(branch.hold ? "Bỏ giữ" : "Giữ · không đăng", branch.hold ? "unhold" : "hold", {}, kind));
@@ -51,13 +58,13 @@ const OutputView = (() => {
     post.append(ui().node("p", batch.product.account, "muted"), ui().node("h3", branch.copy.title),
       ui().node("p", branch.copy.description), ui().node("p", branch.copy.hashtags.join(" "), "hashtags"));
     post.append(ui().link(batch.product.affiliate_url, "Mở link sản phẩm đã cấu hình"),
-      ui().node("p", "Bản xem trước nội dung · chưa đăng. Shorts dẫn qua link hồ sơ, không nhấn URL trong chữ/video.", "muted"));
+      ui().node("p", `Bản xem trước · chưa đăng. Vị trí link trên ${batch.product.platform}: ${batch.product.placement}; không dùng nút/link giả trong hình video.`, "muted"));
     root.append(post); return root;
   }
   function manualPackage(batch, branch) {
     const details = ui().node("details"); details.append(ui().node("summary", "Gói đăng tay · nội dung và đường link"));
     const text = ui().node("textarea"); text.readOnly = true; text.rows = 7;
-    text.value = `${branch.copy.title}\n\n${branch.copy.description}\n${branch.copy.hashtags.join(" ")}\n\nTài khoản: ${batch.product.account}\nLink sản phẩm: ${batch.product.affiliate_url}\nVị trí cho Shorts: link hồ sơ kênh; đối chiếu link/SKU và xem/nghe trước khi đăng.`;
+    text.value = `${branch.copy.title}\n\n${branch.copy.description}\n${branch.copy.hashtags.join(" ")}\n\nTài khoản: ${batch.product.account}\nLink sản phẩm: ${batch.product.affiliate_url}\nVị trí ${batch.product.platform}: ${batch.product.placement}; đối chiếu link/SKU và xem/nghe trước khi đăng.`;
     text.setAttribute("aria-label", "Gói nội dung đăng tay");
     details.append(text, ui().node("p", "Tải MP4 không có nghĩa đã đăng. Không nhúng nút/link giả vào hình video.", "muted")); return details;
   }

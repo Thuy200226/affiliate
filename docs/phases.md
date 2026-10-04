@@ -25,6 +25,10 @@ lịch sử bền vững, khóa chạy, idempotency, phiên same-origin. Không 
 preview nội dung đăng; card bài/kết quả lọc ID và tuổi số liệu, bố cục responsive.
 Tiếp theo: timeline từng scene, catalog ảnh, nhật ký từng bước và pause riêng các
 lịch của dự án sau khi chuyển scheduler về một chủ sở hữu.
+Lượt mở rộng đã thêm catalog nhiều nhóm hàng/ảnh URL/query riêng, ưu tiên/bỏ qua,
+MP4 intake trước/sau, report Shopee theo kỳ, key/profile Settings và quản lý ẩn/xoá
+bài. Xem review-20261004-catalog.md: một sản phẩm thật và ba fixture QA, chưa có
+auto connector Shopee/Flow/publisher daily. Timeline scene và pause lịch vẫn planned.
 Nghiệm thu: click và nhận run_id; restart không mất lịch sử; click lặp không chạy
 trùng; dữ liệu thiếu hiện “chưa biết”; lỗi được báo đúng bước.
 

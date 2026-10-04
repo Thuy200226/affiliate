@@ -39,3 +39,9 @@ Reserve publish key trước upload; kết quả chưa rõ thì reconcile, khôn
 từ view. Review/auto là mode account đã chọn, không bắt review tay mọi job auto.
 Review mỗi phase ít nhất hai lượt khác phương pháp, ghi lỗi và retest; kiểm thử
 console không chứng minh Flow/full automation hoặc hoa hồng đã đạt.
+
+Danh mục nhiều nhóm hàng dùng query riêng, ưu tiên/bỏ qua theo chủ; dữ liệu chưa
+có không thành đánh giá sản phẩm tối ưu. URL đa nguồn chỉ là reference cho đến
+khi nhận MP4. Nhận nguồn đổi hash phải invalidate selected và confirmation;
+file sau xử lý chưa chứng minh face-edit. Mẫu generic không dùng hình M31 cho SKU
+khác. Report tổng đơn/ước tính tách approved/paid, không gán account total cho bài.

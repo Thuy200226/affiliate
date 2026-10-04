@@ -6,6 +6,7 @@ from .overview import summarize
 from .security import Sessions
 from .store import Store
 from .content import Content
+from .connections import Connections
 
 
 class UnavailableError(ValueError):
@@ -21,9 +22,17 @@ class Application:
         self.store = Store(settings.state / "runs.sqlite")
         self.bridge = bridge or Legacy(settings)
         self.content = Content(settings)
+        self.connections = Connections(settings)
+        self.content.connections = self.connections
 
     def overview(self):
-        return summarize(self.bridge)
+        data = summarize(self.bridge)
+        state = self.content.store.read()
+        for video in data["videos"]:
+            video["control"] = state.get("publication_controls", {}).get(video["video_id"], {})
+            product = next((p for p in state["products"] if p["id"] == video["control"].get("product_id")), None)
+            video["product"] = product
+        return data | {"affiliate_reports": state.get("affiliate_reports", [])}
 
     def start(self, flow, body):
         if flow not in ACTIONS or not isinstance(body, dict) or set(body) != {"idempotency_key"}:

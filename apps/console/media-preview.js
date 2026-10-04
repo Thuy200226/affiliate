@@ -11,6 +11,16 @@ const MediaPreview = (() => {
   }
   function create(url, title, publicVideo = true) {
     const ui = window.AffiliateUI, id = youtubeId(url), root = ui.node("div", undefined, "media-preview");
+    const tiktok = /^https:\/\/www\.tiktok\.com\/@[A-Za-z0-9_.-]+\/video\/([0-9]{10,25})$/.exec(url);
+    if (tiktok && publicVideo) {
+      const details = ui.node("details"), player = ui.node("div",undefined,"embedded-player");
+      details.append(ui.node("summary","Xem preview TikTok tại đây"),player);
+      details.addEventListener("toggle",()=>{
+        player.replaceChildren(); if (!details.open) return;
+        const frame = ui.node("iframe"); frame.title = title; frame.src = `https://www.tiktok.com/player/v1/${tiktok[1]}?autoplay=0`;
+        frame.allow = "fullscreen"; frame.referrerPolicy = "strict-origin-when-cross-origin"; frame.dataset.preview = "true"; player.append(frame);
+      }); root.append(details,ui.link(url,"Mở video gốc")); return root;
+    }
     if (!id || !publicVideo) {
       root.append(ui.node("p", publicVideo ? "Xem video trên nền tảng nguồn." : "Chưa công khai · mở bằng tài khoản chủ.", "empty-preview"));
       root.append(ui.link(url, "Mở video gốc")); return root;

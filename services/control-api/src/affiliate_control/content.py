@@ -19,23 +19,12 @@ class Content:
 
     def capabilities(self):
         return {"created_renderer": created_renderer.available(self.settings.runtime),
-                "video_search": discovery.configured(), "flow_runner": False,
+                "video_search": discovery.configured() or bool(getattr(self, "connections", None) and self.connections.has("youtube_search")), "flow_runner": False,
                 "publish_public": False, "daily": False}
 
     def read(self):
-        state = self.store.read()
-        caps = self.capabilities()
-        for batch in state["batches"]:
-            for branch in batch["branches"].values():
-                branch["process_blockers"] = process_blockers(branch, caps)
-                branch["release_blockers"] = ["Link/SKU cần đối chiếu mới.", "Publisher hai nhánh chưa nối; không tự công khai."]
-                if not branch.get("artifact"):
-                    branch["release_blockers"].insert(0, "Chưa có tệp hoàn chỉnh.")
-                elif not branch["artifact"].get("perceptual_reviewed"):
-                    branch["release_blockers"].insert(0, "Cần xem/nghe bản này.")
-                if branch["hold"]:
-                    branch["release_blockers"].insert(0, "Bạn đang giữ bản này.")
-        return state | {"capabilities": caps}
+        from .content_read import enrich
+        return enrich(self.store.read(), self.capabilities())
 
     def post(self, body):
         allowed = {"action", "data", "batch_id", "kind", "expected_version", "idempotency_key"}
@@ -61,14 +50,16 @@ class Content:
             if prior is not None:
                 return prior
             state = self.store.read()
-            find(state["products"], body.get("data", {}).get("product_id"))
+            product = find(state["products"], body.get("data", {}).get("product_id"))
             if state["version"] != body.get("expected_version"):
                 from .store import BusyError
                 raise BusyError("Profile đã đổi; làm mới trước khi tìm.")
-            items = discovery.search(state["settings"])
+            profile = state["settings"] | {"query": product.get("query") or state["settings"]["query"]}
+            key = self.connections.secret("read", "youtube_search") if getattr(self, "connections", None) and self.connections.has("youtube_search") else None
+            items = discovery.search(profile, key)
             def apply(current):
                 sources = [add_source(current, item | {"product_id": body["data"]["product_id"]}) for item in items]
-                current["last_search"] = {"query": state["settings"]["query"], "at": stamp(), "count": len(sources)}
+                current["last_search"] = {"query": profile["query"], "product_id": product["id"], "at": stamp(), "count": len(sources)}
                 return {"source_ids": [s["id"] for s in sources], "count": len(sources)}
             result, _ = self.store.command(body, apply)
             return result

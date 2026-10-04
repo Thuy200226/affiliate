@@ -21,21 +21,8 @@ def text(value, limit, minimum=1):
 
 
 def source_url(value):
-    parsed = urlsplit(text(value, 500))
-    if parsed.scheme != "https" or parsed.username or parsed.password or parsed.port not in (None, 443):
-        raise ValueError("Cần URL video HTTPS hợp lệ.")
-    host = parsed.hostname
-    if host in ("www.youtube.com", "youtube.com", "youtu.be"):
-        ident = (parsed.path.lstrip("/") if host == "youtu.be" else
-                 parsed.path.split("/")[2] if parsed.path.startswith("/shorts/") else
-                 parse_qs(parsed.query).get("v", [""])[0])
-        if re.fullmatch(r"[A-Za-z0-9_-]{11}", ident):
-            return "https://www.youtube.com/watch?v=" + ident
-    if host in ("www.tiktok.com", "tiktok.com") and re.fullmatch(r"/@[^/]+/video/[0-9]+/?", parsed.path):
-        return "https://www.tiktok.com" + parsed.path.rstrip("/")
-    if host in ("www.instagram.com", "instagram.com") and re.fullmatch(r"/(?:reel|p)/[A-Za-z0-9_-]+/?", parsed.path):
-        return "https://www.instagram.com" + parsed.path.rstrip("/") + "/"
-    raise ValueError("Chỉ nhận URL video YouTube, TikTok hoặc Instagram.")
+    from .source_links import normalize
+    return normalize(value)
 
 
 def new_batch(product, profile):
@@ -76,7 +63,7 @@ def confirm_source(branch, source, body):
         raise ValueError("Chủ cần xác nhận nguồn media/âm thanh.")
     branch["confirmation"] = {"source_id": source["id"], "url": source["url"],
                               "media_audio": True, "person_edit": body.get("person_edit") is True,
-                              "confirmed_at": stamp(), "by": "local_owner", "asset_hash": None,
+                              "confirmed_at": stamp(), "by": "local_owner", "asset_hash": source.get("asset", {}).get("sha256"),
                               "expires_at": (datetime.now(timezone.utc) + timedelta(days=7)).isoformat()}
 
 

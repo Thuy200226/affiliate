@@ -47,6 +47,15 @@ là có trong thiết kế; không đồng nghĩa tính năng đã code hoặc �
 | R39 | Bỏ mọi “rule” cản tìm nội dung | raw query không bị âm thầm đổi; không bỏ xác minh nguồn/link/identity/permission | §3/5/7 |
 | R40 | Chủ tự xác nhận nguồn sau khi tìm/chọn | search/ranking không lọc theo quyền; xác nhận owner riêng, giữ nguồn đã chọn | §3/P2/P3 |
 | R41 | Setting bỏ xác nhận | hỗ trợ dùng lại xác nhận còn hiệu lực, không hỏi lặp; không bỏ quyền nguồn chưa xác nhận | §3/7, W51/W52 |
+| R42 | Nhiều sản phẩm/thể loại | catalog 6 nhóm, query/batch riêng; không seed sản phẩm bán giả | catalog, review-catalog |
+| R43 | Làm trước/bỏ sản phẩm | first/normal/skip/restore; skip giữ hai bản, restore không tự bỏ giữ | CatalogView, tests catalog |
+| R44 | Xoá video đã đăng | ẩn local khác xoá thật; typed ID, OAuth owner, registry/uncertain ledger | post_deletion, tests mocked |
+| R45 | Thống kê tại bài | 6 chỉ số card, filter ID/time; mapping chủ khác platform readback | ResultsView |
+| R46 | Login/key công cụ, phiên Chrome | 9 tool Settings, Keychain Mac/profile riêng; chưa probe giữ unknown | connections.md |
+| R47 | Thống kê affiliate | scope/kỳ; clicks/tổng đơn/ước tính/chờ/duyệt/paid; auto connector chưa nối | report_commands |
+| R48 | TikTok/Instagram/mọi nguồn | public reference/player/MP4 intake; chưa có downloader cho mọi site | source_links, MediaIntake |
+| R49 | Preview sau đổi mặt | player file thực/hash; runner đổi mặt chưa nối, không giả đã làm | uploads, OutputView |
+| R50 | UI đẹp, nút/mô tả rõ | navy/indigo, 16px/44px controls, empty state, 9 vùng/draft guard; responsive đã kiểm | review-catalog |
 
 ## Trạng thái triển khai tại lượt lập kế hoạch
 
@@ -57,6 +66,9 @@ confirmation/edit request lưu được nhưng Flow runner chưa nối; face-edi
 daily chưa có. Link/SKU cần refresh và OAuth legacy đang lỗi. Không đánh dấu mọi
 hàng R05–R30 hoàn thành từ UI/tests. Xem review hai video để biết bằng chứng thật.
 Phát hiện/tiêu chí có điều kiện vẫn hiện ở UI/backlog; không tự chọn phương án khác.
+Lượt R42–R50 đã code catalog/controls/intake/reports/Settings; bằng chứng và phần
+chưa nối ở [review catalog](review-20261004-catalog.md). Không coi API key hoặc
+player preview là đã có daily tự tìm/edit/đăng hoàn chỉnh.
 
 ## Cổng bàn giao
 

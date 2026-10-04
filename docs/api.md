@@ -29,7 +29,7 @@ Những route sau chưa được tạo. Không dùng UI mock để báo chúng �
 
 ## Bổ sung cho console sản phẩm — planned
 
-Các contract sau sẽ được chốt trong C1–C4, không phải route hiện có:
+Các contract sau thuộc P1–P4 của plan B-only, không phải route hiện có:
 
 | Route | Trách nhiệm |
 |---|---|
@@ -46,9 +46,33 @@ Các contract sau sẽ được chốt trong C1–C4, không phải route hiện
 | POST /api/v1/manual-publication-reports | permalink chủ khai báo, cần kiểm tra account/media trước xác minh |
 | GET /api/v1/schedules | lịch/topic/account/mode/caps; lịch kiểm tra khác lịch đăng |
 
+## Selection, xác nhận nguồn và Settings — planned
+
+| Route | Trách nhiệm |
+|---|---|
+| GET /api/v1/search-profiles/{id} | raw queries/prompts/criteria, version và provider capability |
+| POST /api/v1/search-profiles/{id}/versions | expected_version, raw query của chủ; batch cũ giữ snapshot |
+| POST /api/v1/discovery-runs | profile_version/product/topic/idempotency; không lọc quyền khi tìm/rank |
+| GET /api/v1/discovery-runs/{id}/videos | mọi kết quả connector, metrics/source/time, recommended khác selected |
+| POST /api/v1/jobs/{id}/source-selections | source_id/expected_revision; đổi nguồn tạo revision và impact preview |
+| POST /api/v1/source-confirmations | owner xác nhận source/hash/phạm vi/hạn; không tự suy từ search |
+| POST /api/v1/source-confirmation-settings/versions | per_source hoặc reuse_valid; không bỏ kiểm unknown |
+| POST /api/v1/jobs/{id}/edit-requests | revision/timecodes/character_ref/request; capability và consent kiểm ở xử lý |
+| POST /api/v1/jobs/{id}/rerun-plans | chỉ preview DAG/quota/invalidation; chưa gọi render hoặc publish |
+| POST /api/v1/jobs/{id}/revisions/{revision}/next | dependencies/lease/fencing; trả run hoặc reason, không chỉ đổi badge |
+| POST /api/v1/jobs/{id}/holds | expected_revision/reason; durable hold dùng chung manual/auto |
+| DELETE /api/v1/jobs/{id}/holds/{hold_id} | owner bỏ hold đúng revision; không tự publish chỉ vì bỏ hold |
+| GET /api/v1/jobs/{id}/timeline | progress thật, heartbeat, timecodes/artifacts, lỗi/next_action |
+| GET /api/v1/jobs/{id}/comparisons | nguồn/B/revisions, copy/link binding; không có nhánh A future |
+
+Confirmations bất biến hoặc revoked; tái dùng chỉ đúng source/hash/scope còn hiệu lực.
+Thông tin quyền thiếu không làm mất kết quả tìm kiếm hay tự thay nguồn đã chọn.
+Edit chưa được capability xác nhận trả needs_owner/blocked; không báo face-edit xong.
+Hold/revision được đọc trong transaction ngay trước gửi; đã gửi thì reconcile.
+
 Server trả reason_codes/checklist và next_action cho bước blocked; không trả một
 boolean “ready” thiếu lý do. Mutations kiểm session/CSRF/revision và quyền đích.
 Public request thiếu điều kiện trả 412; conflict/race trả 409; 202 chỉ là đã nhận
 job, không phải đã đăng. Upload uncertain giữ reservation để đối chiếu, không retry mù.
 
-Xem [luồng đăng tay](product-console-plan.md) và [metric contracts](metrics-contract.md).
+Xem [console B-only/đăng tay](b-only-console-plan.md) và [metric contracts](metrics-contract.md).

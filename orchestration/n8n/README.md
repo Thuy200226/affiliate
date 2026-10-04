@@ -14,9 +14,12 @@ Ba workflow live được cầu nối legacy gọi hiện tại:
 ID là cấu hình triển khai, không phải token. Adapter hiện có không import,
 activate hoặc sửa các workflow này. Chúng vẫn là workflow legacy ngoài repository.
 
-Luồng đích: Schedule → reserve daily batch → discover → match product → resolve
-owned affiliate link → A/B production → QC → review hoặc auto-release → publisher
+Luồng đích: Schedule → reserve daily batch → discover → match product → chọn nguồn
+→ chủ xác nhận nguồn hoặc dùng lại xác nhận hợp lệ → resolve owned affiliate link
+→ B xuyên suốt → QC → review hoặc auto-release → publisher
 → verify processing/link → metrics. Mỗi bước trả run_id, status và artifact references.
+Không lọc/rank quyền trong discovery; unknown chờ chủ sau selection, không thay
+nguồn ngầm. Giữ release hold/revision và khóa chung với UI/heartbeat trước cutover.
 
 Khi chuyển đổi: export bản không có credentials/execution data, thay credential ID
 bằng reference triển khai, kiểm thử inactive, rồi cutover từng lịch. Không nhập các

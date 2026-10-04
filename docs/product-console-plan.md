@@ -1,5 +1,8 @@
 # Kế hoạch tối ưu trang quản lý sản phẩm và nội dung
 
+**Bản lịch sử A/B — đã được thay thế bởi [kế hoạch B-only hiện hành](b-only-console-plan.md).**
+Chỉ tham khảo các quyết định cũ; không dùng tài liệu này để tạo A cho job mới.
+
 Ngày: 04/10/2026. Trạng thái: đặc tả triển khai, chưa phải tính năng đã chạy.
 Phạm vi: mở rộng console hiện có, không xây lại một hệ thống song song.
 Ngân sách tiền mới: 0; triển khai trên máy hiện tại, ưu tiên YouTube trước.

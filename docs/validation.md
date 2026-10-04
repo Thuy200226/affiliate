@@ -1,5 +1,8 @@
 # Bằng chứng kiểm tra — 04/10/2026
 
+Lượt chốt B-only mới hơn: [hai lượt review và khoảng cách triển khai](review-20261004-b-only.md).
+Các kết quả nền tảng dưới đây không phải nghiệm thu 53 ca hoặc toàn bộ B tự động.
+
 ## Bộ mã mới
 
 - 18 kiểm thử hành vi đạt: phiên/CSRF/host; API; reserve/restart; binding SKU/variant/

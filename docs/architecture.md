@@ -15,10 +15,10 @@ flowchart TD
   N[n8n: lịch và điều phối] --> C
   C --> Q[(Jobs / revisions / publish ledger)]
   Q --> D[Discover + product match + owned affiliate link]
-  D --> A[A: kịch bản, giọng, đồ hoạ]
-  D --> B[B: source research, Flow shots, timeline xuyên suốt]
-  A --> QC[Decode + nghe/xem + kiểm link/SKU]
-  B --> QC
+  D --> SEL[Tìm/đề cử không lọc quyền; chủ chọn nguồn]
+  SEL --> E[Chủ xác nhận nguồn; dùng lại xác nhận hợp lệ]
+  E --> B[B-only: edit nguồn/người được phép hoặc Flow shots xuyên suốt]
+  B --> QC[Decode + nghe/xem + kiểm link/SKU]
   QC --> R[Review hoặc release policy theo tài khoản]
   R --> P[Publisher theo nền tảng]
   P --> V[Verify processing, vị trí link, URL bài đăng]
@@ -31,6 +31,26 @@ flowchart TD
 
 ## Quyền sở hữu theo module
 
+Giữ layout README. Mở rộng có mục tiêu, không tạo service cho mỗi folder:
+
+```text
+apps/console/                views/components/api-client theo bảy khu vực (planned)
+services/control-api/        routes/use-cases/read-models, không nhúng renderer
+packages/domain/            catalog/discovery/selection/content/release/metrics (planned)
+services/connectors/         OAuth/capabilities/key refs, session metadata (planned)
+services/browser-worker/     profile local/Flow adapter/owner handoff (planned)
+services/media-worker/       source/edit/timeline/audio/QC (planned)
+services/publisher/          account/platform/placement/ledger/reconcile (planned)
+orchestration/n8n/           contracts/generator/IDs, không credentials trong export
+infra/docker/               Compose/profiles/Dockerfile; không Docker socket vào UI
+config/                     schema và cấu hình mẫu, không session/key thật
+.agents/skills/              hướng dẫn development/production/connections
+```
+
+Source target ≤200 dòng/tệp, hard 250; hàm Python ≤60. SQLite single-host với
+migrations/transactions; đa worker mới xét Postgres. Private runtime giữ media,
+browser profile/token/DB/log; Git cá nhân chỉ code/config mẫu/docs/skills.
+
 | Module | Sở hữu | Không sở hữu |
 |---|---|---|
 | console | preview, review, account/topic routing, lịch sử | token, logic render |
@@ -39,18 +59,22 @@ flowchart TD
 | n8n | schedule, dependency giữa bước, retry safe reads, gửi ID job | giọng, render, secret trong Code node |
 | connectors | OAuth/API capability và refresh; session status | chọn nội dung hoặc tự bật thanh toán |
 | browser-worker (phase 3) | local persistent profile, mở login, thao tác UI Flow hợp lệ | export cookie hoặc xoá nguồn của video khác |
-| media-worker (phase 4) | voice/captions/graphics/Flow composition/QC | publish, sửa link tài khoản |
+| media-worker (phase 4) | Flow edit/composition, voice/captions/QC cho B | publish, sửa link tài khoản |
 | publisher (phase 5) | upload reserve, account identity, final URL, reconciliation | tạo nội dung hoặc suy doanh thu |
 
 ## Trạng thái và dữ liệu
 
-Job: discovered → product_matched → link_verified → brief_ready → producing →
+Job: discovered → product_matched → source_selected → source_confirmed →
+link_verified → brief_ready → producing →
 qc_ready → review_ready → approved → publishing → published_verified → measured.
 Các trạng thái phụ: needs_owner, blocked, failed, interrupted, paused.
 
 Mỗi bước có run_id, batch_id, job_id, revision, input_hash, artifact_sha256,
 started_at/completed_at, nguồn bằng chứng và expires_at. Bất kỳ sửa media/copy/
 SKU/account/link nào tạo revision và vô hiệu approval cũ. Review gắn đúng mã băm.
+Xác nhận nguồn gắn source/hash/phạm vi/hạn; tìm kiếm/ranking không lọc quyền.
+Back chỉ xem; rerun tạo revision và invalidation DAG. Lease/fencing ngăn worker
+cũ ghi kết quả vào bản mới; recommended_id không tự ghi đè selected_id.
 
 Publish ledger unique(account_id, platform, job_id, revision). Timeout sau upload
 chuyển uncertain và reconcile; không tự gửi lại tệp. Khóa daily batch duy nhất
@@ -62,6 +86,9 @@ Hai chế độ theo account/topic: review (giữ bản sẵn sàng) và auto (t
 đủ điều kiện của cấu hình đã chọn). Owner có thể pause lịch, reject từng revision,
 sửa brief rồi tạo revision mới, chạy từng bước, hoặc chạy batch tổng hợp.
 Không bắt người dùng review mọi batch nếu đã chọn auto cho account đó.
+Mục tiêu mặc định là auto sau khi route nghiệm thu; hold tồn tại sau restart và
+được kiểm ngay trước gửi. Warning phong cách không chặn; blocker phải xử lý.
+Settings bỏ hỏi lặp bằng xác nhận còn hiệu lực, không bỏ xác nhận nguồn unknown.
 
 Session hết hạn/CAPTCHA, thiếu quyền nguồn, thiếu tín dụng hoặc scope xuất bản
 đưa đúng bước vào needs_owner. Các job khác vẫn tiếp tục khi không phụ thuộc.

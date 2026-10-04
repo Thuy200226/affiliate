@@ -1,7 +1,7 @@
 # Hợp đồng dữ liệu hiệu quả sản phẩm
 
-Ngày: 04/10/2026. Thiết kế planned cho trang Đang quảng bá/Khám phá; chưa triển khai.
-Phải đọc cùng [kế hoạch console](product-console-plan.md). Không gọi mọi metric là
+Ngày: 04/10/2026. Thiết kế planned cho console B-only; chưa triển khai.
+Phải đọc cùng [kế hoạch console](b-only-console-plan.md). Không gọi mọi metric là
 “tương tác sản phẩm”: phân biệt hiệu quả nội dung, tín hiệu thị trường và affiliate.
 
 ## 1. Đơn vị quan sát
@@ -61,11 +61,15 @@ với view 24h hoặc chia interaction delta không tương thích cho period me
 
 Các chỉ số retention giữ đúng tên/định nghĩa nguồn; tỷ lệ xem trung bình không phải
 tỷ lệ xem hết và không tự cắt về 100%. Đường retention dùng mốc thời gian tương ứng
-đúng revision video; không tính “thắng A/B” chỉ từ tổng lượt xem hai bài khác tuổi.
+đúng revision video; không tính “B thắng revision cũ” từ tổng view hai bài khác tuổi.
+Source/B/revision trước là so sánh nội dung; metrics của source không phải kết quả
+trên kênh chủ. So sánh cohort quan sát không tự chứng minh nguyên nhân tăng hiệu quả.
 
 Xếp hạng trên kênh: cùng platform/format và cửa sổ tuổi bài → đủ mốc mới → tốc độ
 views, retention khả dụng → dấu hiệu tương tác. Hiện công thức/nguồn và nhãn mẫu nhỏ.
-Giai đoạn đầu gợi ý để chủ chọn; không tự public vì một điểm xếp hạng cao.
+Điểm cao không thay QC/link/release eligibility. Auto đủ điều kiện là mode route,
+không phải kết luận thắng chắc từ ranking. Tìm/rank nguồn không lọc theo quyền;
+xác nhận của chủ thuộc bước sau selection, không phải thành phần điểm tương tác.
 
 ## 4. Tổng hợp về sản phẩm
 

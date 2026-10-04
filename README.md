@@ -46,12 +46,16 @@ Repository đã push lên `Thuy200226/affiliate`, dùng danh tính cá nhân ri�
 Xem [kế hoạch](docs/phases.md), [đánh giá code](docs/code-review.md),
 [kiến trúc](docs/architecture.md), [cách vận hành](docs/operations.md).
 
-Kế hoạch mở rộng theo yêu cầu mới: [sản phẩm, tương tác, hàng chờ và đăng tay](docs/product-console-plan.md).
+Kế hoạch hiện hành: [console bảy khu vực và workflow B-only](docs/b-only-console-plan.md).
+[Đối chiếu yêu cầu](docs/requirements-matrix.md) và [ma trận ca kiểm thử](docs/workflow-cases.md)
+phân biệt chức năng cần làm với bằng chứng đã thực hiện. Kế hoạch A/B cũ là lịch sử.
 [Hợp đồng số liệu](docs/metrics-contract.md) quy định nguồn, kỳ đo và attribution.
 Đây là đặc tả tiếp theo; các màn hình/nút đăng mới chưa được triển khai.
+Xem [bằng chứng hai lượt review B-only](docs/review-20261004-b-only.md): test nền tảng
+đạt không có nghĩa source collector/Flow/publisher daily đã hoàn thành.
 
 ## Mức hoàn thiện
 
 Đã có bộ quản lý cục bộ và adapter cho ba workflow hiện có. Chưa có dịch vụ
-đăng nhập xã hội mới, runner Flow không người trực, tự tạo hai video mỗi ngày,
+đăng nhập xã hội mới, runner Flow không người trực, tự tạo B xuyên suốt mỗi ngày,
 hoặc tự công khai đa nền tảng. Các phần này có điều kiện nghiệm thu riêng trong kế hoạch.

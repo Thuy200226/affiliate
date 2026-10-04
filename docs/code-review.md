@@ -36,7 +36,8 @@ Không di chuyển trực tiếp upgrade/ hoặc volume đang chạy. Dùng adap
 chuyển từng module với các fixture sạch và kiểm thử hợp đồng. Private state của
 runtime không trở thành fixture. Bản đăng cũ giữ nguyên fingerprint.
 
-Không có git remote trong các thư mục đã kiểm tra. Chưa push ra dịch vụ ngoài.
+Tại lượt rà runtime ban đầu, các thư mục đã kiểm tra chưa có Git remote.
+Repo sạch sau đó đã push tới tài khoản cá nhân; xem README và validation.
 Không kết luận repo không có secret chỉ bằng một regex; scanner mới là cổng ban đầu.
 
 ## Lượt kiểm tra thật từ console
@@ -46,3 +47,5 @@ Lỗi NodeApiError tại bước đọc YouTube; chẩn đoán cục bộ có t�
 token expired hoặc revoked. Chưa xác định chính xác expired hay revoked; cần refresh
 kết nối qua chủ tài khoản. Không gọi upload/public release hoặc coi số liệu cũ là mới.
 Đây là lỗi connector legacy, không phải kết quả kiểm thử đơn vị của console.
+
+Đánh giá bổ sung sau khi chốt B-only: [hai lượt review](review-20261004-b-only.md).

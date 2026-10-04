@@ -1,11 +1,12 @@
-# Kế hoạch triển khai theo phase
+# Lộ trình kỹ thuật — chỉ B cho nội dung tương lai
 
 Ngày lập: 04/10/2026. Ngân sách tiền mới: 0. Ưu tiên một topic/SKU và YouTube đã
-có kết nối trước, rồi mới mở rộng. Hai video là hai sản phẩm độc lập trong cùng batch.
+có kết nối trước, rồi mới mở rộng. Yêu cầu mới nhất bỏ A: chỉ B xuyên suốt; so sánh
+nguồn/B/revision, không tự tạo hai đầu ra thay yêu cầu cũ.
 
-Các lát cắt giao diện C1–C6 và nghiệm thu sản phẩm/tương tác/hàng chờ/đăng tay ở
-[kế hoạch console](product-console-plan.md). C1–C3 ưu tiên trước mở rộng đa nền tảng;
-dữ liệu theo [hợp đồng số liệu](metrics-contract.md), không cần đợi full automation.
+Phân phase sản phẩm P0–P5 và bảy khu vực UI nằm trong [plan hiện hành](b-only-console-plan.md).
+Các phase kỹ thuật dưới đây là phân rã hỗ trợ, không là lịch thứ hai. Nghiệm thu theo
+[yêu cầu](requirements-matrix.md), [cases](workflow-cases.md) và [hợp đồng số liệu](metrics-contract.md).
 
 ## Phase 0 — Đánh giá và chuẩn bị Git
 
@@ -31,12 +32,16 @@ Chuyển load_jobs/state/reserve khỏi worker 400 dòng; dùng SQLite cho bản
 Postgres chỉ khi chạy đa worker hoặc trên server. Chưa cần Redis/microservice quá nhiều.
 Generator n8n chỉ chứa HTTP steps/IDs; secrets do credential store quản lý.
 
-Catalog phải có variant/connector/claim evidence/rights. Trend discovery được cấu
-hình nguồn/topic, không gắn một trend bất kỳ vào SKU. “Viral” dựa vào view velocity,
+Catalog phải có variant/connector/claim evidence và hồ sơ nguồn. Discovery nhận raw
+query/profile version của chủ; tìm kiếm/đề cử không lọc hay xếp hạng theo quyền.
+Chủ xác nhận nguồn sau selection; Settings dùng lại xác nhận hợp lệ theo source/hash/
+phạm vi để bỏ hỏi lặp, không bypass nguồn chưa xác nhận. Không gắn trend bất kỳ vào SKU.
+“Viral” dựa vào view velocity,
 engagement và thời điểm có nguồn; không lấy tổng views khác tuổi để xếp hạng đơn giản.
 
-Nghiệm thu: reserve cùng batch từ cron/UI chỉ có 1 batch; A và B hai job độc lập;
-không đổi fingerprint của job cũ; TTL hết hạn thì refresh hoặc giữ lại đúng bước.
+Nghiệm thu: reserve cùng batch từ cron/UI chỉ có 1 batch B; không đổi fingerprint
+của job cũ; selection/hold bền vững, fencing ngăn worker cũ ghi vào revision mới;
+TTL hết hạn thì refresh hoặc giữ lại đúng bước.
 
 ## Phase 3 — Tài khoản, session và nguồn video
 
@@ -46,8 +51,10 @@ riêng, login tương tác lần đầu, khóa một profile một worker. UI ch
 mở login và tiếp tục job; không có nút tải cookies/token.
 
 Danh mục video tìm được lưu URL, creator, topic, SKU, thời điểm, metrics nguồn và
-quyền sử dụng. Nếu được phép tải/dựng lại thì lưu media hash + license reference.
-Video khác chỉ dùng nghiên cứu hook/nhịp/cách kể, rồi tạo storyboard mới.
+trạng thái xác nhận của chủ. Tất cả kết quả connector vẫn xem/chọn được khi quyền
+unknown; kiểm nguồn ở bước sau, không âm thầm thay selected bằng recommended.
+Nếu được phép tải/dựng lại thì lưu media hash + confirmation/license reference.
+Nguồn chưa xác nhận giữ needs_owner; tạo storyboard mới chỉ khi chủ chọn hướng đó.
 Không lấy việc xoá watermark/đổi mặt làm bằng chứng có quyền đăng lại.
 
 Browser Flow runner chỉ triển khai khi thao tác được nền tảng cho phép và hạn mức
@@ -57,19 +64,25 @@ nội bộ hoặc trích xuất cookie để giả một API Veo miễn phí.
 Nghiệm thu: account identity đúng; session restart an toàn; không lộ credential;
 nguồn mỗi asset có hồ sơ; credit ledger và timeout; trạng thái blocked không loop vô hạn.
 
-## Phase 4 — Tạo hai video hoàn chỉnh
+## Phase 4 — B xuyên suốt và edit người có điều kiện
 
-A: brief → hook 1–2 giây → voice cục bộ → motion graphics → subtitles → CTA.
-B: nghiên cứu video phù hợp → storyboard mới → ≥3 Flow shots nhất quán toàn bộ
-khung hình → ghép liên tục → voice/subtitles tùy brief → CTA. Không chỉ thêm Flow intro.
+B: source selection → xác nhận nguồn → chỉnh nguồn được phép hoặc storyboard mới
+→ Flow footage nhất quán toàn bộ khung hình → ghép → voice/subtitles tùy brief → CTA.
+Montage dùng ≥3 shots; một nguồn liền mạch cần ADR/validator thích hợp, không cắt giả
+để vượt kiểm tra legacy. Không chỉ thêm Flow intro rồi quay về đồ hoạ.
 Tái dùng cảnh có quyền trong thư viện và dựng bản mới theo topic để tiết kiệm tín dụng.
+
+Edit người giữ trong scope: request/timecode + consent + nhân vật được phép, thử
+capability thật trên tài khoản, so sánh trước/sau và QC ổn định khuôn mặt/SKU.
+Không hứa Flow hỗ trợ đổi mọi mặt; không bỏ edit âm thầm nếu chưa làm được.
 
 Chỉ nhận định product đúng model/variant, không dùng cảnh không khớp làm demo thật.
 Copy ngắn tích cực; không nói production tools/thu nhập của chủ kênh trên video.
 Hook có thể tương phản, hài hước hoặc gây tranh luận về lựa chọn sản phẩm bằng
-thông tin kiểm chứng. Không tạo tình dục tường minh, bịa công dụng hay giả trải nghiệm.
+thông tin kiểm chứng. “Nhạy cảm” là gây chú ý/tranh luận, không phải tình dục.
+Không bịa công dụng hay giả trải nghiệm.
 
-Nghiệm thu: hai MP4 độc lập; toàn bộ decode/voice/captions; nghe và xem toàn bộ,
+Nghiệm thu: B hoàn chỉnh; toàn bộ decode/voice/captions; nghe và xem toàn bộ,
 SKU nhất quán, không che watermark; bản chưa đạt không release. Kiểm tra kỹ thuật
 không tự suy thành video thu hút. Review rubric ghi rõ lỗi cần sửa theo timecode.
 
@@ -87,7 +100,9 @@ Hash/copy/account/link binding đi cùng revision. Short description không có 
 không thêm hashtag không liên quan chỉ vì đang nổi.
 
 Nghiệm thu: private staging → processing verified → metadata/link check → release
-đúng mode của account → permalink registry. Cùng publish key chỉ có một bài.
+đúng mode của account → permalink registry. Auto là mục tiêu mặc định cho route
+đã nghiệm thu; hold của chủ kiểm lại ngay trước gửi. Warning phong cách không đổi
+auto, blocker có reason/next_action riêng. Cùng publish key chỉ có một bài.
 [YouTube Shorts](https://support.google.com/youtube/answer/13748639?hl=en) không cho
 nhấp URL mô tả/comment; dùng profile hoặc Shopping nếu account đủ điều kiện.
 [TikTok Direct Post](https://developers.tiktok.com/doc/content-posting-api-get-started/)
@@ -95,10 +110,12 @@ giới hạn client chưa audit ở private; phải xử lý điều kiện này
 
 ## Phase 6 — Lịch hằng ngày và đánh giá
 
-Scheduler theo Asia/Ho_Chi_Minh: thu thập nguồn → tạo batch → chạy A/B → release theo
+Scheduler theo Asia/Ho_Chi_Minh: thu thập nguồn → tạo batch → chạy B → release theo
 account/topic → đo sau các mốc thời gian. Giờ cụ thể được chọn sau dữ liệu kênh;
 không tuyên bố một giờ đăng tốt nhất khi chưa có dữ liệu. Ban đầu daily cap 1 bài/
-account cho một loại nội dung; A/B có thể phân ngày để không đăng hai bản gần trùng.
+account cho một loại nội dung; không đăng các revision gần trùng để lấp lịch.
+Nguồn chưa xác nhận chờ chủ; nguồn có xác nhận còn hiệu lực không hỏi lại. Kiểm tra
+mỗi 3h không thay cho lịch tạo/đăng daily, không tự đổi lịch legacy trong lượt lập plan.
 
 Queue có concurrency cap, retry safe reads, backoff, dead-letter và spending limit.
 Tín dụng Flow là quota riêng; hết quota thì giữ B chờ, không mua thêm hoặc bật API phí.
